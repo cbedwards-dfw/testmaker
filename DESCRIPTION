@@ -1,11 +1,17 @@
 Package: testmaker
-Title: What the Package Does (One Line, Title Case)
+Title: Facilitate writing testthat tests and parameter checks for data frames
 Version: 0.0.0.9000
 Authors@R: 
     person("Collin", "Edwards", , "Collin.Edwards@dfw.wa.gov", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0002-4937-5159"))
-Description: What the package does (one paragraph).
+Description: Based on a template dataframe, generates R code for `testthat` tests or `stopifnot` checks. Intended to streamline testwriting rather than completely automate it; user will need to review the generated code and decide which comparisons make sense.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.1
+Suggests: 
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3
+Imports: 
+    cli,
+    clipr
