@@ -90,12 +90,14 @@ the primary function and just delete the generated lines I do not need.
 Let’s presume we’re writing a function that takes as an input a
 dataframe with the same number of columns, same column names, and same
 types as `mtcars`. As an example, the following function code takes
-`mtcars`-like dataframes and makes a paired plot. Perhaps we have dozens
-of alternative `mtcars` type dataframes that do
+`mtcars`-like dataframes and makes a paired plot of some selected
+columns. Perhaps we have dozens of alternative `mtcars`-like dataframes
+representing different sets of cars, and we use this function to
+streamline plot-making.
 
 ``` r
 foo = function(dat){
-  pairs(dat,
+  pairs(dat[,-(5:11)],
         labels = c(
           "Miles/gallon",
           "# of cylinders",
@@ -112,11 +114,12 @@ foo = function(dat){
 }
 ```
 
-The function `foo` function is fairly fragile – if we feed it data that
-doesn’t match the columns names (in order) that we’re expecting, our
-labels will be wrong; if your input doesn’t have enough columns. Let’s
-compare `foo` behavior when given an appropriate dataframe (`mtcars`)
-and an inappropriate dataframe (`cars`).
+The function `foo` function is quite fragile (intentionally so). If we
+feed it data that doesn’t match the columns names (in order) that we’re
+expecting, our labels will be wrong; if our input don’t have enough
+columns, `foo` will generate a simpler plot with the existing columns.
+Let’s compare `foo` behavior when given an appropriate dataframe
+(`mtcars`) and an inappropriate dataframe (`cars`).
 
 ``` r
 foo(mtcars)
@@ -132,9 +135,11 @@ foo(cars)
 
 The second plot has incorrect labels and is not plotting the type of
 data we intended to, but we did not get an error. If we want to make
-this function more robust by adding in error checks to compare the
-argument `dat` with the characteristics we’re expecting, we can use
-`testmaker_df_sin()`
+this function more robust, we can use `testmaker_df_sin()` to generate
+`stopIfNot()` code check that `dat` has characteristics that match our
+template dataframe (`mtcars`). (Yes, in this case we could also rewrite
+the existing code to be far less fragile, but that is not always
+easy/possible).
 
 ``` r
 testmaker_df_sin(mtcars, return.style = "none", object.name = "dat")
@@ -193,9 +198,27 @@ foo2 = function(dat){
 }
 ```
 
-In this case, it may be cleaner to write a single test of column types,
-since we know they all need to be type double. The generated tests are
-not meant to be a starting point rather than an ending point.
+Let’s see how this new function behaves when given `mtcars` or `cars`.
+
+``` r
+foo2(mtcars)
+```
+
+<img src="man/figures/README-unnamed-chunk-7-1.png" width="100%" />
+
+``` r
+foo2(cars)
+#> Error in foo2(cars): ncol(dat) == 11 is not TRUE
+```
+
+Now when we (or another user) accidentally give `foo2` the wrong data
+type, we (or they) receive an error rather than having the function
+behave incorrectly.
+
+In the case of `foo2()`, it may be cleaner to write a single test of
+column types, since we know they all need to be type double. The
+generated tests from `testmaker` are meant to be a starting point rather
+than an ending point.
 
 ## Function name conventions
 
@@ -219,12 +242,13 @@ I intend to add the following features:
 ## Dev notes
 
 It was suggested this could be provided in the testthat setup files:
-<https://testthat.r-lib.org/articles/special-files.html>. From that: \>
-Helper files live in tests/testtthat/, start with helper, and end with
-.r or .R. They are sourced by devtools::load_all() (so they’re available
-interactively when developing your packages) and by test_check() and
-friends (so that they’re available no matter how your tests are
-executed).
+<https://testthat.r-lib.org/articles/special-files.html>. From that:
+
+> Helper files live in tests/testtthat/, start with helper, and end with
+> .r or .R. They are sourced by devtools::load_all() (so they’re
+> available interactively when developing your packages) and by
+> test_check() and friends (so that they’re available no matter how your
+> tests are executed).
 
 I will dig into how this package can easily be inserted in the the
 testthat setup files, and will update documentation with instructions
