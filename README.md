@@ -184,7 +184,7 @@ foo2 = function(dat){
   stopifnot('`dat` column names do not match expectation.\nShould be: c("mpg", "cyl", "disp", "hp", "drat", "wt", "qsec", "vs", "am", "gear", "carb")' = identical(names(dat), c("mpg", "cyl", "disp", "hp", "drat", "wt", "qsec", "vs", "am", "gear", "carb")))
   
   
-  pairs(dat,
+  pairs(dat[,-(5:11)],
         labels = c(
           "Miles/gallon",
           "# of cylinders",
@@ -215,8 +215,8 @@ foo2(cars)
 ```
 
 Now when we (or another user) accidentally give `foo2` the wrong data
-type, we (or they) receive an error rather than having the function
-behave incorrectly.
+type, we (or they) receive an informative error message rather than
+having the function silently behave incorrectly.
 
 In the case of `foo2()`, it may be cleaner to write a single test of
 column types, since we know they all need to be type double. The
