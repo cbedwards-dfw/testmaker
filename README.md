@@ -218,7 +218,7 @@ than an ending point.
 
 In some cases it may be useful to ensure that one or more columns of an
 input (or output) contain only the expected values or all of the
-expected values. As an example, imagine we our template dataframe is an
+expected values. As an example, imagine our template dataframe is an
 augmented version of the built-in data `state.x77` that contains a
 column `state`. Our hypothetical function should produce a similar
 dataframe, including a `state` column which should contain *all* of the
@@ -281,12 +281,12 @@ head(dat)
 #> California California      21198   5114        1.1    71.71   10.3    62.6
 #> Colorado     Colorado       2541   4884        0.7    72.06    6.8    63.9
 #>            Frost   Area category
-#> Alabama       20  50708        e
-#> Alaska       152 566432        a
-#> Arizona       15 113417        a
-#> Arkansas      65  51945        c
-#> California    20 156361        d
-#> Colorado     166 103766        b
+#> Alabama       20  50708        d
+#> Alaska       152 566432        d
+#> Arizona       15 113417        d
+#> Arkansas      65  51945        a
+#> California    20 156361        a
+#> Colorado     166 103766        e
 ```
 
 ``` r
@@ -302,7 +302,7 @@ testmaker_df_colcontent_tt(dat, cols = c("state", "category"), return.style = "n
 #>   "South Carolina", "South Dakota", "Tennessee", "Texas", "Utah", 
 #>   "Vermont", "Virginia", "Washington", "West Virginia", "Wisconsin", 
 #>   "Wyoming"),
-#> category = c("e", "a", "c", "d", "b"))
+#> category = c("d", "a", "e", "c", "b"))
 #> ## Checking that column(s) contain no unexpected entries
 #> expect_true(all(unique(res$state) %in% entries.expect$state))
 #> expect_true(all(unique(res$category) %in% entries.expect$category))

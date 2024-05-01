@@ -127,7 +127,7 @@ In the case of `foo2()`, it may be cleaner to write a single test of column type
 
 ### Checking column values
 
-In some cases it may be useful to ensure that one or more columns of an input (or output) contain only the expected values or all of the expected values. As an example, imagine we our template dataframe is an augmented version of the built-in data `state.x77` that contains a column `state`. Our hypothetical function should produce a similar dataframe, including a `state` column which should contain *all* of the entries from our template dataframe. Let's first create our template dataframe (in application, this probably already exists):
+In some cases it may be useful to ensure that one or more columns of an input (or output) contain only the expected values or all of the expected values. As an example, imagine our template dataframe is an augmented version of the built-in data `state.x77` that contains a column `state`. Our hypothetical function should produce a similar dataframe, including a `state` column which should contain *all* of the entries from our template dataframe. Let's first create our template dataframe (in application, this probably already exists):
 
 ```{r}
 dat = data.frame(state = rownames(state.x77), state.x77)
