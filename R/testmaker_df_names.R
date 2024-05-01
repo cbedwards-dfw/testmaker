@@ -63,3 +63,22 @@ testmaker_df_names_sin_orderless = function(x,  return.style = c("clip", "text",
 
   finish_testmaker(test.text = test.text, return.style = return.style, silent = silent)
 }
+
+testmaker_df_names_cli = function(x,  return.style = c("clip", "text", "none"), silent = FALSE, object.name = "res"){
+  validate_testmaker(x, return.style, silent, object.name)
+
+  names.vec = glue::glue_collapse(glue::glue('"{names(x)}"'), sep = ", ")
+  test.text = glue::glue('stopifnot(\'`{object.name}` column names do not match expectation.\\nShould be: c({names.vec})\' = identical(names({object.name}), c({names.vec})))')
+  test.text = paste0('stopifnot(identical(names(', object.name, '),c(', paste0(paste0('"', names(x), '"'), collapse = ", "), ')))')
+
+  text.if = glue::glue('if(!identical(names({object.name}), c({names.vec})))')
+  text.alert = glue::glue('cli::cli_abort(c(\'One or more names in `{object.name}` is incorrect!\',\
+                          \'Expect {names.vec}\',\
+                          glue::glue(\'Found {{val}}\',\n',
+                          '  val = glue::glue_collapse(glue::glue(\'"{{names({object.name})}}"\'), sep = ", "))))')
+  test.text = glue::glue("{text.if}{{\n  {text.alert}\n}}")
+  test.text = paste0(as.character(test.text), collapse = "\n")
+
+
+  finish_testmaker(test.text = test.text, return.style = return.style, silent = silent)
+}

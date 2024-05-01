@@ -55,6 +55,8 @@ lines I do not need.
 
 ### Checking inputs
 
+*Note: The following creates stopifnot statements, using the `..._sin()` family of functions. For more more informative error messages using if statements and `cli::cli_abort()` messages, use the `..._cli()` family of functions.*
+
 Let's presume we're writing a function that takes as an input a dataframe with the same number of columns, same
 column names, and same types as `mtcars`. As an example, the following function takes `mtcars`-like dataframes and makes a paired plot of some selected columns. Perhaps we and our collaborators/coworkers have dozens of alternative `mtcars`-like dataframes representing different sets of cars, and we wrote this function to streamline plot-making. 
 

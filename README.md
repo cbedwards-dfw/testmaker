@@ -90,6 +90,11 @@ the primary function and just delete the generated lines I do not need.
 
 ### Checking inputs
 
+*Note: The following creates stopifnot statements, using the `..._sin()`
+family of functions. For more more informative error messages using if
+statements and `cli::cli_abort()` messages, use the `..._cli()` family
+of functions.*
+
 Let’s presume we’re writing a function that takes as an input a
 dataframe with the same number of columns, same column names, and same
 types as `mtcars`. As an example, the following function takes
@@ -281,12 +286,12 @@ head(dat)
 #> California California      21198   5114        1.1    71.71   10.3    62.6
 #> Colorado     Colorado       2541   4884        0.7    72.06    6.8    63.9
 #>            Frost   Area category
-#> Alabama       20  50708        d
+#> Alabama       20  50708        a
 #> Alaska       152 566432        d
-#> Arizona       15 113417        d
-#> Arkansas      65  51945        a
-#> California    20 156361        a
-#> Colorado     166 103766        e
+#> Arizona       15 113417        b
+#> Arkansas      65  51945        c
+#> California    20 156361        c
+#> Colorado     166 103766        a
 ```
 
 ``` r
@@ -302,7 +307,7 @@ testmaker_df_colcontent_tt(dat, cols = c("state", "category"), return.style = "n
 #>   "South Carolina", "South Dakota", "Tennessee", "Texas", "Utah", 
 #>   "Vermont", "Virginia", "Washington", "West Virginia", "Wisconsin", 
 #>   "Wyoming"),
-#> category = c("d", "a", "e", "c", "b"))
+#> category = c("a", "d", "b", "c", "e"))
 #> ## Checking that column(s) contain no unexpected entries
 #> expect_true(all(unique(res$state) %in% entries.expect$state))
 #> expect_true(all(unique(res$category) %in% entries.expect$category))

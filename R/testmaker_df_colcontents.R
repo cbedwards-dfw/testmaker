@@ -39,6 +39,41 @@ testmaker_df_colcontent_tt = function(x, cols, return.style = c("clip", "text", 
   finish_testmaker(test.text = test.text, return.style = return.style, silent = silent)
 }
 
+
+#' Generate `stopifnot` code to check contents of column(s) against template
+#'
+#' @inheritParams testmaker_df_colcontent_tt
+#' @inheritParams testmaker_df_sin
+#'
+#' @inherit testmaker_df_sin return
+#' @export
+#'
+#' @examples
+#'
+#' dat = data.frame(state.x77, state = rownames(state.x77))
+#' dat$category = sample(letters[1:5], size = nrow(dat), replace = TRUE)
+#' testmaker_df_colcontent_sin(dat, c("state", "category"), return.style = "none")
+#'
+testmaker_df_colcontent_sin = function(x, cols, return.style = c("clip", "text", "none"), silent = FALSE, object.name = "res"){
+  validate_testmaker(x, return.style, silent, object.name)
+  stopifnot("`cols` must be a character or character vector" = is.character(cols))
+  stopifnot("`cols` must be column names in `x`" = all(cols %in% names(x)))
+
+  contents.vec = unlist(lapply(x[,cols, drop = FALSE], function(x) {dput_to_string(unique(x))}))
+  test.text = c( "## Recreating expected entries",
+                 glue::glue('entries.expect = list({vectext})',
+                            vectext = glue::glue_collapse(
+                              glue::glue('{cols} = {contents.vec}'),
+                              sep = ",\n")),
+                 "## Checking that column(s) contain no unexpected entries",
+                 glue::glue('stopifnot(\'Unexpected value in {object.name}${cols}\' = all(unique(res${cols}) %in% entries.expect${cols}))'),
+                 "## Checking that column(s) contain all expected entries",
+                 glue::glue('stopifnot(\'Missing expected value in {object.name}${cols}\' = all(entries.expect${cols} %in% unique(res${cols})))')
+  )
+  finish_testmaker(test.text = test.text, return.style = return.style, silent = silent)
+}
+
+
 #' Helper function to convert string to R code to regenerate that string.
 #'
 #' @param object R object, expecting a vector
