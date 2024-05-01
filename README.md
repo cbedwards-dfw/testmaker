@@ -162,19 +162,21 @@ robust version of `foo`.
 
 ``` r
 foo2 = function(dat){
-  stopifnot("Number of columns is not 11" = ncol(dat) == 11)
-  stopifnot("type of column `mpg` is not double" = typeof(dat$mpg) == "double")
-  stopifnot("type of column `cyl` is not double" = typeof(dat$cyl) == "double")
-  stopifnot("type of column `disp` is not double" = typeof(dat$disp) == "double")
-  stopifnot("type of column `hp` is not double" = typeof(dat$hp) == "double")
-  stopifnot("type of column `drat` is not double" = typeof(dat$drat) == "double")
-  stopifnot("type of column `wt` is not double" = typeof(dat$wt) == "double")
-  stopifnot("type of column `qsec` is not double" = typeof(dat$qsec) == "double")
-  stopifnot("type of column `vs` is not double" = typeof(dat$vs) == "double")
-  stopifnot("type of column `am` is not double" = typeof(dat$am) == "double")
-  stopifnot("type of column `gear` is not double" = typeof(dat$gear) == "double")
-  stopifnot("type of column `carb` is not double" = typeof(dat$carb) == "double")
+  stopifnot("Number of rows in `dat` is not 32" = nrow(dat) == 32)
+  stopifnot("Number of columns in `dat` is not 11" = ncol(dat) == 11)
+  stopifnot("In `dat`, type of column `mpg` is not double" = typeof(dat$mpg) == "double")
+  stopifnot("In `dat`, type of column `cyl` is not double" = typeof(dat$cyl) == "double")
+  stopifnot("In `dat`, type of column `disp` is not double" = typeof(dat$disp) == "double")
+  stopifnot("In `dat`, type of column `hp` is not double" = typeof(dat$hp) == "double")
+  stopifnot("In `dat`, type of column `drat` is not double" = typeof(dat$drat) == "double")
+  stopifnot("In `dat`, type of column `wt` is not double" = typeof(dat$wt) == "double")
+  stopifnot("In `dat`, type of column `qsec` is not double" = typeof(dat$qsec) == "double")
+  stopifnot("In `dat`, type of column `vs` is not double" = typeof(dat$vs) == "double")
+  stopifnot("In `dat`, type of column `am` is not double" = typeof(dat$am) == "double")
+  stopifnot("In `dat`, type of column `gear` is not double" = typeof(dat$gear) == "double")
+  stopifnot("In `dat`, type of column `carb` is not double" = typeof(dat$carb) == "double")
   stopifnot('`dat` column names do not match expectation.\nShould be: c("mpg", "cyl", "disp", "hp", "drat", "wt", "qsec", "vs", "am", "gear", "carb")' = identical(names(dat), c("mpg", "cyl", "disp", "hp", "drat", "wt", "qsec", "vs", "am", "gear", "carb")))
+  
   
   
   pairs(dat[,-(5:11)],
@@ -197,7 +199,7 @@ foo2(mtcars)
 
 ``` r
 foo2(cars)
-#> Error in foo2(cars): Number of columns is not 11
+#> Error in foo2(cars): Number of rows in `dat` is not 32
 ```
 
 Now when we (or another user) accidentally give `foo2` the wrong data
