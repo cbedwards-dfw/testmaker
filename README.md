@@ -133,30 +133,32 @@ foo(cars)
 
 <img src="man/figures/README-unnamed-chunk-4-2.png" width="100%" />
 
-The second plot has incorrect labels and is not plotting the type of
-data we intended to, but we did not get an error. If we want to make
-this function more robust, we can use `testmaker_df_sin()` to generate
-`stopIfNot()` code check that `dat` has characteristics that match our
-template dataframe (`mtcars`). (Yes, in this case we could also rewrite
-the existing code to be far less fragile, but that is not always
-easy/possible).
+The second plot has incorrect labels (the two columns in `cars` are
+“Speed (mph)” and “Stopping distance”; see `?cars`) and is not plotting
+the type of data we intended to, but we did not get an error. Instead,
+the function successfully ran and gave us misleading results. If we want
+to make this function more robust, we can use `testmaker_df_sin()` to
+generate `stopIfNot()` code check that `dat` has characteristics that
+match our template dataframe (`mtcars`). (Yes, in this case we could
+also rewrite the existing code to be far less fragile, but that is not
+always easy/possible).
 
 ``` r
 testmaker_df_sin(mtcars, return.style = "none", object.name = "dat")
-#> stopifnot(nrow(dat) == 32)
-#> stopifnot(ncol(dat) == 11)
-#> stopifnot(typeof(dat$mpg) == "double")
-#> stopifnot(typeof(dat$cyl) == "double")
-#> stopifnot(typeof(dat$disp) == "double")
-#> stopifnot(typeof(dat$hp) == "double")
-#> stopifnot(typeof(dat$drat) == "double")
-#> stopifnot(typeof(dat$wt) == "double")
-#> stopifnot(typeof(dat$qsec) == "double")
-#> stopifnot(typeof(dat$vs) == "double")
-#> stopifnot(typeof(dat$am) == "double")
-#> stopifnot(typeof(dat$gear) == "double")
-#> stopifnot(typeof(dat$carb) == "double")
-#> stopifnot(identical(names(dat), c("mpg", "cyl", "disp", "hp", "drat", "wt", "qsec", "vs", "am", "gear", "carb")))
+#> stopifnot("Number of rows in `dat` is not 32" = nrow(dat) == 32)
+#> stopifnot("Number of columns in `dat` is not 11" = ncol(dat) == 11)
+#> stopifnot("In `dat`, type of column `mpg` is not double" = typeof(dat$mpg) == "double")
+#> stopifnot("In `dat`, type of column `cyl` is not double" = typeof(dat$cyl) == "double")
+#> stopifnot("In `dat`, type of column `disp` is not double" = typeof(dat$disp) == "double")
+#> stopifnot("In `dat`, type of column `hp` is not double" = typeof(dat$hp) == "double")
+#> stopifnot("In `dat`, type of column `drat` is not double" = typeof(dat$drat) == "double")
+#> stopifnot("In `dat`, type of column `wt` is not double" = typeof(dat$wt) == "double")
+#> stopifnot("In `dat`, type of column `qsec` is not double" = typeof(dat$qsec) == "double")
+#> stopifnot("In `dat`, type of column `vs` is not double" = typeof(dat$vs) == "double")
+#> stopifnot("In `dat`, type of column `am` is not double" = typeof(dat$am) == "double")
+#> stopifnot("In `dat`, type of column `gear` is not double" = typeof(dat$gear) == "double")
+#> stopifnot("In `dat`, type of column `carb` is not double" = typeof(dat$carb) == "double")
+#> stopifnot('`dat` column names do not match expectation.\nShould be: c("mpg", "cyl", "disp", "hp", "drat", "wt", "qsec", "vs", "am", "gear", "carb")' = identical(names(dat), c("mpg", "cyl", "disp", "hp", "drat", "wt", "qsec", "vs", "am", "gear", "carb")))
 ```
 
 Here we specify the object name (alternatively we could leave
@@ -167,19 +169,20 @@ robust version of `foo`.
 
 ``` r
 foo2 = function(dat){
-  stopifnot(ncol(dat) == 11)
-  stopifnot(typeof(dat$mpg) == "double")
-  stopifnot(typeof(dat$cyl) == "double")
-  stopifnot(typeof(dat$disp) == "double")
-  stopifnot(typeof(dat$hp) == "double")
-  stopifnot(typeof(dat$drat) == "double")
-  stopifnot(typeof(dat$wt) == "double")
-  stopifnot(typeof(dat$qsec) == "double")
-  stopifnot(typeof(dat$vs) == "double")
-  stopifnot(typeof(dat$am) == "double")
-  stopifnot(typeof(dat$gear) == "double")
-  stopifnot(typeof(dat$carb) == "double")
-  stopifnot(identical(names(dat), c("mpg", "cyl", "disp", "hp", "drat", "wt", "qsec", "vs", "am", "gear", "carb")))
+  stopifnot("Number of columns is not 11" = ncol(dat) == 11)
+  stopifnot("type of column `mpg` is not double" = typeof(dat$mpg) == "double")
+  stopifnot("type of column `cyl` is not double" = typeof(dat$cyl) == "double")
+  stopifnot("type of column `disp` is not double" = typeof(dat$disp) == "double")
+  stopifnot("type of column `hp` is not double" = typeof(dat$hp) == "double")
+  stopifnot("type of column `drat` is not double" = typeof(dat$drat) == "double")
+  stopifnot("type of column `wt` is not double" = typeof(dat$wt) == "double")
+  stopifnot("type of column `qsec` is not double" = typeof(dat$qsec) == "double")
+  stopifnot("type of column `vs` is not double" = typeof(dat$vs) == "double")
+  stopifnot("type of column `am` is not double" = typeof(dat$am) == "double")
+  stopifnot("type of column `gear` is not double" = typeof(dat$gear) == "double")
+  stopifnot("type of column `carb` is not double" = typeof(dat$carb) == "double")
+  stopifnot('`dat` column names do not match expectation.\nShould be: c("mpg", "cyl", "disp", "hp", "drat", "wt", "qsec", "vs", "am", "gear", "carb")' = identical(names(dat), c("mpg", "cyl", "disp", "hp", "drat", "wt", "qsec", "vs", "am", "gear", "carb")))
+  
   
   pairs(dat,
         labels = c(
@@ -208,7 +211,7 @@ foo2(mtcars)
 
 ``` r
 foo2(cars)
-#> Error in foo2(cars): ncol(dat) == 11 is not TRUE
+#> Error in foo2(cars): Number of columns is not 11
 ```
 
 Now when we (or another user) accidentally give `foo2` the wrong data

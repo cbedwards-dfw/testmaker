@@ -32,14 +32,12 @@ testmaker_df_names_tt = function(x,  return.style = c("clip", "text", "none"), s
 
 testmaker_df_names_sin = function(x,  return.style = c("clip", "text", "none"), silent = FALSE, object.name = "res"){
   validate_testmaker(x, return.style, silent, object.name)
-
-  test.text = glue::glue('stopifnot(identical(names({object.name}), c({names.vec})))',
-                         names.vec = glue::glue_collapse(glue::glue('"{names(x)}"'), sep = ", "))
+  names.vec = glue::glue_collapse(glue::glue('"{names(x)}"'), sep = ", ")
+  test.text = glue::glue('stopifnot(\'`{object.name}` column names do not match expectation.\\nShould be: c({names.vec})\' = identical(names({object.name}), c({names.vec})))')
   # test.text = paste0('stopifnot(identical(names(', object.name, '),c(', paste0(paste0('"', names(x), '"'), collapse = ", "), ')))')
 
   finish_testmaker(test.text = test.text, return.style = return.style, silent = silent)
 }
-
 
 
 #' Generate `stopifnot` code for dataframe column names disregarding order
@@ -55,9 +53,9 @@ testmaker_df_names_sin = function(x,  return.style = c("clip", "text", "none"), 
 testmaker_df_names_sin_orderless = function(x,  return.style = c("clip", "text", "none"), silent = FALSE, object.name = "res"){
   validate_testmaker(x, return.style, silent, object.name)
 
-  test.text = c(glue::glue('stopifnot(all(names({object.name}) %in% c({names.list})))',
+  test.text = c(glue::glue('stopifnot(\'`{object.name}` contains unexpected columns.\\n Expecting {names.list}.\' = all(names({object.name}) %in% c({names.list})))',
                            names.list = glue::glue_collapse(glue::glue('"{names(x)}"'), sep = ", ")),
-                glue::glue('stopifnot(all(c({names.list}) %in% names({object.name})))',
+                glue::glue('stopifnot(\'`{object.name}` does not contain all expected columns.\\n Expecting {names.list}.\' = all(c({names.list}) %in% names({object.name})))',
                            names.list = glue::glue_collapse(glue::glue('"{names(x)}"'), sep = ", "))
                 )
   # test.text = c(paste0('stopifnot(all(names(', object.name, ') %in% c(', paste0(paste0('"', names(x), '"'), collapse = ", "), ')))'),

@@ -31,7 +31,7 @@ testmaker_df_class_sin = function(x,  return.style = c("clip", "text", "none"), 
   validate_testmaker(x, return.style, silent, object.name)
 
   cur.type = lapply(x, typeof)
-  test.text = glue::glue('stopifnot(typeof({object.name}${names(cur.type)}) == "{cur.type}")')
+  test.text = glue::glue('stopifnot("In `{object.name}`, type of column `{names(cur.type)}` is not {cur.type}" = typeof({object.name}${names(cur.type)}) == "{cur.type}")')
   # test.text = paste0('stopifnot(typeof(', object.name, '$', names(x), ') == "', unlist(res), '")')
 
   finish_testmaker(test.text = test.text, return.style = return.style, silent = silent)

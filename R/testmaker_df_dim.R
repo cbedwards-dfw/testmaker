@@ -35,8 +35,9 @@ testmaker_df_dim_sin =function(x,  return.style = c("clip", "text", "none"), sil
   validate_testmaker(x, return.style, silent, object.name)
 
   cur.dim = dim(x)
-  test.text = glue::glue('stopifnot({dim.fun}({object.name}) == {cur.dim})',
-                         dim.fun = c("nrow", "ncol"))
+  test.text = glue::glue('stopifnot("Number of {dim.labels} in `{object.name}` is not {cur.dim}" = {dim.fun}({object.name}) == {cur.dim})',
+                         dim.fun = c("nrow", "ncol"),
+                         dim.labels = c("rows", "columns"))
   # test.text = paste0('stopifnot(', c("nrow", "ncol"), '(', object.name, ') == ', res, ')')
 
   finish_testmaker(test.text = test.text, return.style = return.style, silent = silent)
