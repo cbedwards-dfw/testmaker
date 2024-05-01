@@ -1,6 +1,6 @@
 
 
-#' Title
+#' Generate stopifnot code for dataframe dimensions
 #'
 #' @inheritParams testmaker_df_dim
 #' @param object.name Name of the object to apply the stopifnot to; presumably the name of the dataframe argument
@@ -12,17 +12,10 @@
 #' @examples
 #' stopifnotmaker_df_dim(cars, return.style = "text")
 stopifnotmaker_df_dim =function(x,  return.style = c("clip", "text", "none"), silent = FALSE, object.name = "res"){
-  if(!return.style[1] %in% c("clip", "text", "none")){
-    cli::cli_abort('`return.style` must be "clip", "text" or "none"')
-  }
+  validate_testmaker(x, return.style, silent)
+
   res = dim(x)
-  test.text = paste0('stopfinot(', c("nrow", "ncol"), '(', object.name, ') == ', res, '))')
-  if(!silent){
-    cat(test.text, sep = "\n")
-  }
-  if(return.style[1] == "clip"){
-    clipr::write_clip(test.text)
-  }else if(return.style[1] == "text"){
-    return(test.text)
-  }
+  test.text = paste0('stopifnot(', c("nrow", "ncol"), '(', object.name, ') == ', res, ')')
+
+  finish_testmaker(test.text = test.text, return.style = return.style, silent = silent)
 }
