@@ -26,5 +26,5 @@ From a provided template data frame, generates testthat code to check that the n
 the dimensions of the template data frame. Default behavior loads the code into the clipboard for easy pasting into code.
 }
 \examples{
-testmaker_df_dim_tt(cars, return = "text")
+testmaker_df_dim_tt(cars, return = "none")
 }

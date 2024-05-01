@@ -9,7 +9,7 @@
 #' @export
 #'
 #' @examples
-#' testmaker_df_dim_tt(cars, return = "text")
+#' testmaker_df_dim_tt(cars, return = "none")
 testmaker_df_dim_tt = function(x,  return.style = c("clip", "text", "none"), silent = FALSE){
 
   validate_testmaker(x, return.style, silent)

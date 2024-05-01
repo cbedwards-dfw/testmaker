@@ -2,6 +2,7 @@
 
 export(testmaker_df_class_sin)
 export(testmaker_df_class_tt)
+export(testmaker_df_colcontent_tt)
 export(testmaker_df_dim_sin)
 export(testmaker_df_dim_tt)
 export(testmaker_df_names_sin)
