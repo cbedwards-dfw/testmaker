@@ -6,7 +6,7 @@
 <!-- badges: start -->
 <!-- badges: end -->
 
-The goal of testmaker is to streamline the generation of parameter
+The goal of `testmaker` is to streamline the generation of parameter
 checking and testthat test generation for dataframes, based on template
 data frames. When developing R code for packages, it’s valuable to write
 test functions using the `testthat` framework. When writing functions
@@ -66,19 +66,22 @@ testmaker_df_tt(mtcars, return.style = "none")
 ```
 
 Note that I specify `return.style = "none"` here because the default
-behavior of saving to the clipboard behaves poorly when compiling readme
-files. When actualyl using this function, our next step would be to
-paste our clipboard into a `testthat` function which started by
-generating an object named `res` using the function we’re developing.
+behavior of saving to the clipboard doesn’t work well in readme files.
+When actually using this function (with the default return.style), our
+next step would be to paste our clipboard into a `testthat` function, in
+which we have already written code to generate an object named `res`
+using the function we’re developing.
 
-Several of the generated lines may not be appropriate. For example, we
-may not expect our data frame to have the same number of rows as
-`mtcars`. The general use-case is to call the function with the default
-return.style, paste into your test function, and delete any lines that
-are not appropriate for your scenario (for this reason, checking column
-types is split into one line per column). The functions of this package
-are not intended to replace your decision-making when writing tests,
-merely to reduce the typing necessary.
+`testmaker_df_tt` generates all tests that are likely to be relevant,
+but we may not want all of them in any given situation. For example, in
+`foo` we may not expect our data frame to have the same number of rows
+as `mtcars`. The intended use for `testmaker_df_tt` is to call the
+function with just the template dataframe, paste into our test function,
+and delete any lines that are not appropriate for our scenario (To
+streamline deleting unneeded tests, the tests for checking column types
+is split into one line per column). The functions of this package are
+not intended to replace our decision-making when writing tests, merely
+to reduce the typing necessary.
 
 Individual functions for generating code to test for individual
 characteristics can be called separately
@@ -89,11 +92,11 @@ the primary function and just delete the generated lines I do not need.
 
 Let’s presume we’re writing a function that takes as an input a
 dataframe with the same number of columns, same column names, and same
-types as `mtcars`. As an example, the following function code takes
+types as `mtcars`. As an example, the following function takes
 `mtcars`-like dataframes and makes a paired plot of some selected
-columns. Perhaps we have dozens of alternative `mtcars`-like dataframes
-representing different sets of cars, and we use this function to
-streamline plot-making.
+columns. Perhaps we and our collaborators/coworkers have dozens of
+alternative `mtcars`-like dataframes representing different sets of
+cars, and we wrote this function to streamline plot-making.
 
 ``` r
 foo = function(dat){
@@ -211,6 +214,118 @@ column types, since we know they all need to be type double. The
 generated tests from `testmaker` are meant to be a starting point rather
 than an ending point.
 
+### Checking column values
+
+In some cases it may be useful to ensure that one or more columns of an
+input (or output) contain only the expected values or all of the
+expected values. As an example, imagine we our template dataframe is an
+augmented version of the built-in data `state.x77` that contains a
+column `state`. Our hypothetical function should produce a similar
+dataframe, including a `state` column which should contain *all* of the
+entries from our template dataframe. Let’s first create our template
+dataframe (in application, this probably already exists):
+
+``` r
+dat = data.frame(state = rownames(state.x77), state.x77)
+head(dat)
+#>                 state Population Income Illiteracy Life.Exp Murder HS.Grad
+#> Alabama       Alabama       3615   3624        2.1    69.05   15.1    41.3
+#> Alaska         Alaska        365   6315        1.5    69.31   11.3    66.7
+#> Arizona       Arizona       2212   4530        1.8    70.55    7.8    58.1
+#> Arkansas     Arkansas       2110   3378        1.9    70.66   10.1    39.9
+#> California California      21198   5114        1.1    71.71   10.3    62.6
+#> Colorado     Colorado       2541   4884        0.7    72.06    6.8    63.9
+#>            Frost   Area
+#> Alabama       20  50708
+#> Alaska       152 566432
+#> Arizona       15 113417
+#> Arkansas      65  51945
+#> California    20 156361
+#> Colorado     166 103766
+```
+
+We can generate tests for the presence of expected values and absence of
+unexpected values in the `state` column of an object from our
+hypothetical function by using the `testmaker_df_colcontents_tt`.
+
+``` r
+testmaker_df_colcontent_tt(dat, cols = "state", return.style = "none")
+#> ## Recreating expected entries
+#> entries.expect = list(state = c("Alabama", "Alaska", "Arizona", "Arkansas", "California", "Colorado", 
+#>   "Connecticut", "Delaware", "Florida", "Georgia", "Hawaii", "Idaho", 
+#>   "Illinois", "Indiana", "Iowa", "Kansas", "Kentucky", "Louisiana", 
+#>   "Maine", "Maryland", "Massachusetts", "Michigan", "Minnesota", 
+#>   "Mississippi", "Missouri", "Montana", "Nebraska", "Nevada", "New Hampshire", 
+#>   "New Jersey", "New Mexico", "New York", "North Carolina", "North Dakota", 
+#>   "Ohio", "Oklahoma", "Oregon", "Pennsylvania", "Rhode Island", 
+#>   "South Carolina", "South Dakota", "Tennessee", "Texas", "Utah", 
+#>   "Vermont", "Virginia", "Washington", "West Virginia", "Wisconsin", 
+#>   "Wyoming"))
+#> ## Checking that column(s) contain no unexpected entries
+#> expect_true(all(unique(res$state) %in% entries.expect$state))
+#> ## Checking that column(s) contain all expected entries
+#> expect_true(all(entries.expect$state %in% unique(res$state)))
+```
+
+We can specify multiple columns to generate code to check each of them.
+Here we add a new column to our template as an example
+
+``` r
+dat$category= sample(letters[1:5], size = nrow(dat), replace = TRUE)
+head(dat)
+#>                 state Population Income Illiteracy Life.Exp Murder HS.Grad
+#> Alabama       Alabama       3615   3624        2.1    69.05   15.1    41.3
+#> Alaska         Alaska        365   6315        1.5    69.31   11.3    66.7
+#> Arizona       Arizona       2212   4530        1.8    70.55    7.8    58.1
+#> Arkansas     Arkansas       2110   3378        1.9    70.66   10.1    39.9
+#> California California      21198   5114        1.1    71.71   10.3    62.6
+#> Colorado     Colorado       2541   4884        0.7    72.06    6.8    63.9
+#>            Frost   Area category
+#> Alabama       20  50708        e
+#> Alaska       152 566432        a
+#> Arizona       15 113417        a
+#> Arkansas      65  51945        c
+#> California    20 156361        d
+#> Colorado     166 103766        b
+```
+
+``` r
+testmaker_df_colcontent_tt(dat, cols = c("state", "category"), return.style = "none")
+#> ## Recreating expected entries
+#> entries.expect = list(state = c("Alabama", "Alaska", "Arizona", "Arkansas", "California", "Colorado", 
+#>   "Connecticut", "Delaware", "Florida", "Georgia", "Hawaii", "Idaho", 
+#>   "Illinois", "Indiana", "Iowa", "Kansas", "Kentucky", "Louisiana", 
+#>   "Maine", "Maryland", "Massachusetts", "Michigan", "Minnesota", 
+#>   "Mississippi", "Missouri", "Montana", "Nebraska", "Nevada", "New Hampshire", 
+#>   "New Jersey", "New Mexico", "New York", "North Carolina", "North Dakota", 
+#>   "Ohio", "Oklahoma", "Oregon", "Pennsylvania", "Rhode Island", 
+#>   "South Carolina", "South Dakota", "Tennessee", "Texas", "Utah", 
+#>   "Vermont", "Virginia", "Washington", "West Virginia", "Wisconsin", 
+#>   "Wyoming"),
+#> category = c("e", "a", "c", "d", "b"))
+#> ## Checking that column(s) contain no unexpected entries
+#> expect_true(all(unique(res$state) %in% entries.expect$state))
+#> expect_true(all(unique(res$category) %in% entries.expect$category))
+#> ## Checking that column(s) contain all expected entries
+#> expect_true(all(entries.expect$state %in% unique(res$state)))
+#> expect_true(all(entries.expect$category %in% unique(res$category)))
+```
+
+As a word of warning, this function should only be used on columns that
+contain some kind of identifier, not columns with values that do not
+fall into discrete classes (e.g., we should avoid using this on the
+“Income” or “Population” columns of our example data). This is because
+(a) we typically don’t expect the set of measured or calculated values
+to be identical between the template and our function’s input or output,
+and (b) for larger template dataframes, the generated code could end up
+being very large if there are many unique values.
+
+If we expect values of some column to be within a numerical range, that
+should be written as a separate test. Because of the the low probability
+that the appropriate range is exactly that in a template dataframe,
+there is no `testmaker` function to streamline writing this sort of
+test.
+
 ## Function name conventions
 
 Primary functions are written in the form
@@ -228,7 +343,6 @@ I intend to add the following features:
 - `.*_cli()` functions that provide equivalent output to the `.*sin()`
   functions but using `cli::cli_abort()`. This would match the
   conventions used in other FRAM team packages.
-- 
 
 ## Dev notes
 
