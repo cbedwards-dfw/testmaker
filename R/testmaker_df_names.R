@@ -1,6 +1,6 @@
 
 
-#' Generate testthat code for dataframe column names
+#' Generate `testthat` code for dataframe column names
 #'
 #' @inheritParams testmaker_df_dim
 #'

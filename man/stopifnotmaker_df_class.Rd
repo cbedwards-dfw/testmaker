@@ -2,7 +2,7 @@
 % Please edit documentation in R/stopifnotmaker_df_class.R
 \name{stopifnotmaker_df_class}
 \alias{stopifnotmaker_df_class}
-\title{Generate stopifnot code for dataframe column classes}
+\title{Generate \code{stopifnot} code for dataframe column classes}
 \usage{
 stopifnotmaker_df_class(
   x,
@@ -26,7 +26,7 @@ in the function the test is being written for. Character string; default "res".}
 Either nothing or a character vector of lines of R code for writing a stopifnot test.
 }
 \description{
-Generate stopifnot code for dataframe column classes
+Generate \code{stopifnot} code for dataframe column classes
 }
 \examples{
 stopifnotmaker_df_class(cars, return.style = "text")

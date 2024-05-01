@@ -2,7 +2,7 @@
 % Please edit documentation in R/testmaker_df_dim.R
 \name{testmaker_df_dim}
 \alias{testmaker_df_dim}
-\title{Generate testthat code for dataframe dimensions}
+\title{Generate \code{testthat} code for dataframe dimensions}
 \usage{
 testmaker_df_dim(x, return.style = c("clip", "text", "none"), silent = FALSE)
 }

@@ -2,7 +2,7 @@
 % Please edit documentation in R/testmaker_df_names.R
 \name{testmaker_df_names}
 \alias{testmaker_df_names}
-\title{Generate testthat code for dataframe column names}
+\title{Generate \code{testthat} code for dataframe column names}
 \usage{
 testmaker_df_names(x, return.style = c("clip", "text", "none"), silent = FALSE)
 }
@@ -18,7 +18,7 @@ testmaker_df_names(x, return.style = c("clip", "text", "none"), silent = FALSE)
 Either nothing or a character vector of lines of R code for writing a testthat test, depending on \code{return.style}.
 }
 \description{
-Generate testthat code for dataframe column names
+Generate \code{testthat} code for dataframe column names
 }
 \examples{
 testmaker_df_names(cars, return.style = "text")

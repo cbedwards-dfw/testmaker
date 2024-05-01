@@ -1,4 +1,4 @@
-#' Generate stopifnot code for dataframe column classes
+#' Generate `stopifnot` code for dataframe column classes
 #'
 #' @inheritParams stopifnotmaker_df_dim
 #'

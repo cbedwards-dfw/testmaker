@@ -1,4 +1,4 @@
-#' Generate testthat code for dataframe dimensions
+#' Generate `testthat` code for dataframe dimensions
 #'
 #' From a provided template data frame, generates testthat code to check that the nrow and ncols of the `res` dataframe match
 #' the dimensions of the template data frame. Default behavior loads the code into the clipboard for easy pasting into code.

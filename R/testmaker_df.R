@@ -3,7 +3,7 @@
 #' Generates R code to test expectations based on a template database. Intended workflow:
 #' when writing functions to work with a dataframe with a specific expected structure,
 #' load an example of that dataframe into the environment and then call `testmaker_df(exampledataframe)`.
-#' This will print testthat::expect_* function calls based on the dimensions of the example data frame, the classes
+#' This will print `testthat::expect_*()`function calls based on the dimensions of the example data frame, the classes
 #' of the columns, and the names of the columns. Note that this is not intended to replace decision-making, but rather
 #' to streamline the process of generating the relevant code. In particular, testing the number of rows is often not appropriate
 #' (e.g., in many use cases the input data frame is expected to have unknown nrow).
