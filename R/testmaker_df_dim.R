@@ -3,18 +3,42 @@
 #' From a provided template data frame, generates testthat code to check that the nrow and ncols of the `res` dataframe match
 #' the dimensions of the template data frame. Default behavior loads the code into the clipboard for easy pasting into code.
 #'
-#' @inheritParams testmaker_df
+#' @inheritParams testmaker_df_tt
 #'
-#' @inherit testmaker_df return
+#' @inherit testmaker_df_tt return
 #' @export
 #'
 #' @examples
-#' testmaker_df_dim(cars, return = "text")
-testmaker_df_dim = function(x,  return.style = c("clip", "text", "none"), silent = FALSE){
+#' testmaker_df_dim_tt(cars, return = "text")
+testmaker_df_dim_tt = function(x,  return.style = c("clip", "text", "none"), silent = FALSE){
+
   validate_testmaker(x, return.style, silent)
 
-  res = dim(x)
-  test.text = paste0('expect_equal(', c("nrow", "ncol"), '(res), ', res, '))')
+  cur.dim = dim(x)
+  test.text = glue::glue('expect_equal({dimfun}(res), {cur.dim})',dimfun = c("nrow", "ncol"))
 
   finish_testmaker(test.text = test.text, return.style = return.style, silent = silent)
+
+}
+
+#' Generate `stopifnot` code for dataframe dimensions
+#'
+#' @inheritParams testmaker_df_sin
+#'
+#' @return Either nothing or a character vector of lines of R code for writing a stopifnot test.
+#' @export
+#'
+#' @examples
+#' testmaker_df_dim_sin(cars, return.style = "text")
+testmaker_df_dim_sin =function(x,  return.style = c("clip", "text", "none"), silent = FALSE, object.name = "res"){
+
+  validate_testmaker(x, return.style, silent, object.name)
+
+  cur.dim = dim(x)
+  test.text = glue::glue('stopifnot({dim.fun}({object.name}) == {cur.dim})',
+                         dim.fun = c("nrow", "ncol"))
+  # test.text = paste0('stopifnot(', c("nrow", "ncol"), '(', object.name, ') == ', res, ')')
+
+  finish_testmaker(test.text = test.text, return.style = return.style, silent = silent)
+
 }

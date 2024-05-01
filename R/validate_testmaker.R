@@ -3,7 +3,7 @@
 #'
 #' Internal helper function to streamline validation
 #'
-#' @inheritParams testmaker_df_dim
+#' @inheritParams testmaker_df_dim_tt
 #' @param return.style Defines what is returned by testmaker functions. SHOULD be "clip", "text", or "none"
 #' @param object.name Name of the object to apply the stopifnot to; presumably the name of the dataframe argument
 #' in the function the test is being written for. Defaults to NULL; provide when validating a stopifnot_* function.
@@ -29,10 +29,10 @@ validate_testmaker = function(x, return.style, silent, object.name = NULL){
 #'
 #' Internal helper function.
 #'
-#' @inheritParams testmaker_df_dim
+#' @inheritParams testmaker_df_dim_tt
 #' @param test.text Character vector of the finished lines of codes to display or provide as appropriate.
 #'
-#' @inherit testmaker_df_dim return
+#' @inherit testmaker_df_dim_tt return
 #'
 finish_testmaker = function(test.text, return.style, silent){
   if(!silent){
