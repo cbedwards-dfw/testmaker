@@ -21,12 +21,11 @@ testmaker_df_dim_tt = function(x,  return.style = c("clip", "text", "none"), sil
 
 }
 
-#' Generate `stopifnot` code for dataframe dimensions
+#' **Deprecated** Generate `stopifnot` code for dataframe dimensions
 #'
 #' @inheritParams testmaker_df_sin
 #'
 #' @return Either nothing or a character vector of lines of R code for writing a stopifnot test.
-#' @export
 #'
 #' @examples
 #' testmaker_df_dim_sin(cars, return.style = "text")
@@ -35,7 +34,7 @@ testmaker_df_dim_sin = function(x,  return.style = c("clip", "text", "none"), si
   validate_testmaker(x, return.style, silent, object.name)
 
   cur.dim = dim(x)
-  test.text = glue::glue('stopifnot("Number of {dim.labels} in `{object.name}` is not {cur.dim}" = {dim.fun}({object.name}) == {cur.dim})',
+  test.text = glue::glue('stopifnot("Number of {dim.labels} in `{object.name}` must be {cur.dim}" = {dim.fun}({object.name}) == {cur.dim})',
                          dim.fun = c("nrow", "ncol"),
                          dim.labels = c("rows", "columns"))
   # test.text = paste0('stopifnot(', c("nrow", "ncol"), '(', object.name, ') == ', res, ')')
@@ -54,16 +53,20 @@ testmaker_df_dim_sin = function(x,  return.style = c("clip", "text", "none"), si
 #' @examples
 #' testmaker_df_dim_cli(cars, return.style = "text")
 #'
-testmaker_df_dim_cli = function(x,  return.style = c("clip", "text", "none"), silent = FALSE, object.name = "res"){
+testmaker_df_dim_cli = function(x,  return.style = c("clip", "text", "none"), silent = FALSE, object.name = "res", for.fun = FALSE){
 
-  validate_testmaker(x, return.style, silent, object.name)
+  validate_testmaker(x = x, return.style = return.style, silent = silent, object.name = object.name)
 
   cur.dim = dim(x)
   dim.fun = c("nrow", "ncol")
 
+  #logic to support including this in a helper function
+  abort.args = ifelse(for.fun,', call = call' ,'')
+  object.name.text = ifelse(for.fun, '{arg}', object.name)
+
   text.if = glue::glue('if({dim.fun}({object.name}) != {cur.dim})')
-  text.alert = glue::glue('cli::cli_abort(glue::glue("Number of {dim.labels} does not match expectation. Expected {cur.dim}, found {{val}}!",
-                          val = {dim.fun}({object.name})))',
+  text.alert = glue::glue("abort.val = {dim.fun}({object.name})\n",
+                          'cli::cli_abort("Number of {dim.labels} in `{object.name.text}` must be {cur.dim}, but is {{abort.val}}."{abort.args})',
                     dim.labels = c("rows", "columns"))
   test.text = glue::glue("{text.if}{{\n  {text.alert}\n}}")
   test.text = paste0(as.character(test.text), collapse = "\n")

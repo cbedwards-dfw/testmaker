@@ -4,7 +4,13 @@
 \alias{validate_testmaker}
 \title{Validation function for testmaker functions}
 \usage{
-validate_testmaker(x, return.style, silent, object.name = NULL)
+validate_testmaker(
+  x,
+  return.style,
+  silent,
+  object.name = NULL,
+  call = rlang::caller_env()
+)
 }
 \arguments{
 \item{x}{Template dataframe of target object (e.g. we expect our test object to share properties with this)}

@@ -8,7 +8,8 @@ testmaker_df_dim_cli(
   x,
   return.style = c("clip", "text", "none"),
   silent = FALSE,
-  object.name = "res"
+  object.name = "res",
+  for.fun = FALSE
 )
 }
 \arguments{

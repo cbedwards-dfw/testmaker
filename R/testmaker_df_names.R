@@ -40,12 +40,11 @@ testmaker_df_names_sin = function(x,  return.style = c("clip", "text", "none"), 
 }
 
 
-#' Generate `stopifnot` code for dataframe column names disregarding order
+#' **DEPRECATED** Generate `stopifnot` code for dataframe column names disregarding order
 #'
 #' @inheritParams testmaker_df_class_sin
 #'
 #' @inherit testmaker_df_class_sin return
-#' @export
 #'
 #' @examples
 #' testmaker_df_names_sin(cars, return.style = "text")
@@ -64,18 +63,21 @@ testmaker_df_names_sin_orderless = function(x,  return.style = c("clip", "text",
   finish_testmaker(test.text = test.text, return.style = return.style, silent = silent)
 }
 
-testmaker_df_names_cli = function(x,  return.style = c("clip", "text", "none"), silent = FALSE, object.name = "res"){
+testmaker_df_names_cli = function(x,  return.style = c("clip", "text", "none"), silent = FALSE, object.name = "res", for.fun = FALSE){
   validate_testmaker(x, return.style, silent, object.name)
+
+  abort.args = ifelse(for.fun,', call = call' ,'')
+  object.name.text = ifelse(for.fun, '{arg}', object.name)
 
   names.vec = glue::glue_collapse(glue::glue('"{names(x)}"'), sep = ", ")
   test.text = glue::glue('stopifnot(\'`{object.name}` column names do not match expectation.\\nShould be: c({names.vec})\' = identical(names({object.name}), c({names.vec})))')
   test.text = paste0('stopifnot(identical(names(', object.name, '),c(', paste0(paste0('"', names(x), '"'), collapse = ", "), ')))')
 
   text.if = glue::glue('if(!identical(names({object.name}), c({names.vec})))')
-  text.alert = glue::glue('cli::cli_abort(c(\'One or more names in `{object.name}` is incorrect!\',\
-                          \'Expect {names.vec}\',\
+  text.alert = glue::glue('cli::cli_abort(c(\'One or more column names in `{object.name.text}` does not match expectations.\',\
+                          \'Must match {names.vec}\',\
                           glue::glue(\'Found {{val}}\',\n',
-                          '  val = glue::glue_collapse(glue::glue(\'"{{names({object.name})}}"\'), sep = ", "))))')
+                          '  val = glue::glue_collapse(glue::glue(\'"{{names({object.name})}}"\'), sep = ", "))){abort.args})')
   test.text = glue::glue("{text.if}{{\n  {text.alert}\n}}")
   test.text = paste0(as.character(test.text), collapse = "\n")
 

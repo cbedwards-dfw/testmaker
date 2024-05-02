@@ -16,4 +16,5 @@ Imports:
     cli,
     clipr,
     glue,
+    rlang,
     utils

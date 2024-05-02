@@ -2,7 +2,7 @@
 % Please edit documentation in R/testmaker_df.R
 \name{testmaker_df_sin}
 \alias{testmaker_df_sin}
-\title{Workhorse function to generate \code{stopifnot} tests for dataframe inputs}
+\title{\strong{Deprecated} Workhorse function to generate \code{stopifnot} tests for dataframe inputs}
 \usage{
 testmaker_df_sin(
   x,

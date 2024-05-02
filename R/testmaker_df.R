@@ -33,7 +33,7 @@ testmaker_df_tt = function(x, return.style = c("clip", "text", "none"), silent =
 }
 
 
-#' Workhorse function to generate `stopifnot` tests for dataframe inputs
+#' **Deprecated** Workhorse function to generate `stopifnot` tests for dataframe inputs
 #'
 #' Generates R code to test expectations based on a template database. Intended workflow:
 #' when writing functions to work with a dataframe with a specific expected structure,
@@ -48,7 +48,6 @@ testmaker_df_tt = function(x, return.style = c("clip", "text", "none"), silent =
 #' @param col.order.matters When we generate code to test for column names, should we test for exact equivalence (`TRUE`), or just the presence of all the same column names (`FALSE`)?. Logical, defaults to TRUE
 #'
 #' @inherit testmaker_df_tt return
-#' @export
 #'
 #' @examples
 #' \dontrun{
@@ -97,7 +96,8 @@ testmaker_df_cli = function(x, return.style = c("clip", "text", "none"), silent 
   validate_testmaker(x, return.style, silent, object.name)
 
 
-  test.text = c(testmaker_df_dim_cli(x, return.style = "text", silent = TRUE, object.name),
+  test.text = c(testmaker_df_isit_cli(x, return.style = "text", silent = TRUE, object.name),
+                testmaker_df_dim_cli(x, return.style = "text", silent = TRUE, object.name),
                 testmaker_df_class_cli(x, return.style = "text", silent = TRUE, object.name))
 
   if(col.order.matters){
@@ -105,8 +105,20 @@ testmaker_df_cli = function(x, return.style = c("clip", "text", "none"), silent 
                   testmaker_df_names_cli(x, return.style = "text", silent = TRUE, object.name))
   }else{
     # test.text = c(test.text,
-                  # testmaker_df_names_sin_orderless(x, return.style = "text", silent = TRUE, object.name))
+    # testmaker_df_names_sin_orderless(x, return.style = "text", silent = TRUE, object.name))
   }
+
+  finish_testmaker(test.text = test.text, return.style = return.style, silent = silent)
+}
+
+testmaker_df_validater = function(x, return.style = c("clip", "text", "none"), silent = FALSE, object.name = "x", col.order.matters = TRUE){
+  validate_testmaker(x, return.style, silent, object.name)
+
+  test.text = c(glue::glue(" <- function({object.name}, arg = rlang::caller_arg(x), call = rlang::caller_env()){{"),
+                testmaker_df_isit_cli(x, return.style = "text", silent = TRUE, object.name, for.fun = TRUE),
+                testmaker_df_dim_cli(x, return.style = "text", silent = TRUE, object.name, for.fun = TRUE),
+                testmaker_df_class_cli(x, return.style = "text", silent = TRUE, object.name, for.fun = TRUE),
+                "}")
 
   finish_testmaker(test.text = test.text, return.style = return.style, silent = silent)
 }

@@ -40,13 +40,12 @@ testmaker_df_colcontent_tt = function(x, cols, return.style = c("clip", "text", 
 }
 
 
-#' Generate `stopifnot` code to check contents of column(s) against template
+#' **DEPRECATED** Generate `stopifnot` code to check contents of column(s) against template
 #'
 #' @inheritParams testmaker_df_colcontent_tt
 #' @inheritParams testmaker_df_sin
 #'
 #' @inherit testmaker_df_sin return
-#' @export
 #'
 #' @examples
 #'

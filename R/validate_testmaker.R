@@ -10,17 +10,25 @@
 #'
 #'
 #'
-validate_testmaker = function(x, return.style, silent, object.name = NULL){
-  stopifnot("x must be a dataframe" = is.data.frame(x))
-  stopifnot("`silent must be logical" = is.logical(silent))
+validate_testmaker = function(x, return.style, silent, object.name = NULL, call = rlang::caller_env()){
+  if(!is.data.frame(x)){
+    abort.var = class(x)
+    cli::cli_abort('`x` must be a dataframe, but is {abort.var}.', call = call)
+  }
+  if(!is.logical(silent)){
+    abort.var = class(silent)
+    cli::cli_abort('`silent` must be logical, but is {abort.var}.', call = call)
+  }
   if(!return.style[1] %in% c("clip", "text", "none")){
-    cli::cli_abort('`return.style` must be "clip", "text" or "none"')
+    cli::cli_abort('`return.style` must be "clip", "text" or "none", but is {return.style}', call = call)
   }
   if(!is.null(object.name) & !is.character(object.name)){
-    cli::cli_abort("`object.name` must be a character string")
+    abort.var = class(object.name)
+    cli::cli_abort("`object.name` must be a character string, but is {abort.var}.", call = call)
   }
   if(!is.null(object.name) & length(object.name)!=1){
-    cli::cli_abort("`object.name` must have length 1")
+    abort.var = length(object.name)
+    cli::cli_abort("`object.name` must have length 1, but is {abort.var}.", call = call)
   }
 }
 
