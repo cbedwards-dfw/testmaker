@@ -71,8 +71,8 @@ testmaker_df_validator(cars, return.style = "none")
 #> names.surprising = names(x)[! names(x) %in% names.expected]
 #> names.missing = names.expected[! names.expected %in% names(x)]
 #> names.expected.dup = names.expected[duplicated(names.expected)]
-#> names.provided.dup = names(res)[duplicated(names(res))]
-#> text.use = c("One or more column names in `res` does not match expectations.",
+#> names.provided.dup = names(x)[duplicated(names(x))]
+#> text.use = c("One or more column names in `{arg}` does not match expectations.",
 #> "Missing column(s): {ifelse(length(names.missing) == 0, \"[none]\", paste0(names.missing, collapse = \", \"))}.",
 #> "Unexpected column(s): {ifelse(length(names.surprising) == 0, \"[none]\",paste0(names.surprising, collapse = \", \"))}")
 #> if(length(c(names.expected.dup, names.provided.dup)) != 0){
@@ -219,9 +219,11 @@ The second plot has incorrect labels (the two columns in `cars` are
 “Speed (mph)” and “Stopping distance”; see `?cars`) and is not plotting
 the data we intended, but we did not get an error. Instead, the function
 successfully ran and gave us misleading results. If we want to make
-`foo` more robust, we can use `testmaker_df_cli()` to generate
-informative `cli::cli_abort()` based checks to confirm that the input
-`dat` has characteristics that match our template dataframe (`mtcars`).
+`foo` more robust, we should add code to check that the argument `dat`
+has the right number of columns, that they match the names we’re
+expecting, and that they’re the right data type. `testmaker_df_cli()`
+streamlines this process, using informative `cli::cli_abort()` based
+checks written based on our template dataframe (`mtcars`).
 
 ``` r
 testmaker_df_cli(mtcars, return.style = "none", object.name = "dat")
@@ -260,8 +262,8 @@ testmaker_df_cli(mtcars, return.style = "none", object.name = "dat")
 #> names.surprising = names(dat)[! names(dat) %in% names.expected]
 #> names.missing = names.expected[! names.expected %in% names(dat)]
 #> names.expected.dup = names.expected[duplicated(names.expected)]
-#> names.provided.dup = names(res)[duplicated(names(res))]
-#> text.use = c("One or more column names in `res` does not match expectations.",
+#> names.provided.dup = names(dat)[duplicated(names(dat))]
+#> text.use = c("One or more column names in `dat` does not match expectations.",
 #> "Missing column(s): {ifelse(length(names.missing) == 0, \"[none]\", paste0(names.missing, collapse = \", \"))}.",
 #> "Unexpected column(s): {ifelse(length(names.surprising) == 0, \"[none]\",paste0(names.surprising, collapse = \", \"))}")
 #> if(length(c(names.expected.dup, names.provided.dup)) != 0){
@@ -283,14 +285,19 @@ testmaker_df_cli(mtcars, return.style = "none", object.name = "dat")
 Here we specify the object name (alternatively we could leave
 object.name at the default, which is “res”, and then find/replace in the
 new text). Pasting our system clipboard into our function definition and
-deleting tests we don’t need (row number), we get this an updated, more
-robust version of `foo`.
+deleting the test based on row numbers (which is probably not appropriat
+ehere), we get this an updated, more robust version of `foo`.
 
 ``` r
 foo2 = function(dat){
+  ## input checks written by testmaker_df_cli()
   if(!is.data.frame(dat)){
     abort.val = class(dat)
     cli::cli_abort("`dat` must be dataframe, but is {abort.val}.")
+  }
+  if(nrow(dat) != 32){
+    abort.val = nrow(dat)
+    cli::cli_abort("Number of rows in `dat` must be 32, but is {abort.val}.")
   }
   if(ncol(dat) != 11){
     abort.val = ncol(dat)
@@ -319,8 +326,8 @@ foo2 = function(dat){
   names.surprising = names(dat)[! names(dat) %in% names.expected]
   names.missing = names.expected[! names.expected %in% names(dat)]
   names.expected.dup = names.expected[duplicated(names.expected)]
-  names.provided.dup = names(res)[duplicated(names(res))]
-  text.use = c("One or more column names in `res` does not match expectations.",
+  names.provided.dup = names(dat)[duplicated(names(dat))]
+  text.use = c("One or more column names in `dat` does not match expectations.",
                "Missing column(s): {ifelse(length(names.missing) == 0, \"[none]\", paste0(names.missing, collapse = \", \"))}.",
                "Unexpected column(s): {ifelse(length(names.surprising) == 0, \"[none]\",paste0(names.surprising, collapse = \", \"))}")
   if(length(c(names.expected.dup, names.provided.dup)) != 0){
@@ -338,6 +345,7 @@ foo2 = function(dat){
     cli::cli_abort(text.use)
   }
   
+  ## Our original code
   pairs(dat[,-(5:11)],
         labels = c(
           "Miles/gallon",
@@ -348,14 +356,19 @@ foo2 = function(dat){
 }
 ```
 
-Let’s see how this new function behaves when given `mtcars` or `cars`.
+This has added quite a lot of code, but we personally did not have to
+write it. Let’s see how `foo2` behaves when given `mtcars` or `cars`.
 
 ``` r
 foo2(mtcars)
-#> Error in foo2(mtcars): object 'res' not found
+```
+
+<img src="man/figures/README-unnamed-chunk-8-1.png" width="100%" />
+
+``` r
 foo2(cars)
 #> Error in `foo2()`:
-#> ! Number of columns in `dat` must be 11, but is 2.
+#> ! Number of rows in `dat` must be 32, but is 50.
 ```
 
 Now when we (or another user) accidentally give `foo2` the wrong data
@@ -397,8 +410,8 @@ testmaker_df_validator(mtcars, return.style = "none")
 #> names.surprising = names(x)[! names(x) %in% names.expected]
 #> names.missing = names.expected[! names.expected %in% names(x)]
 #> names.expected.dup = names.expected[duplicated(names.expected)]
-#> names.provided.dup = names(res)[duplicated(names(res))]
-#> text.use = c("One or more column names in `res` does not match expectations.",
+#> names.provided.dup = names(x)[duplicated(names(x))]
+#> text.use = c("One or more column names in `{arg}` does not match expectations.",
 #> "Missing column(s): {ifelse(length(names.missing) == 0, \"[none]\", paste0(names.missing, collapse = \", \"))}.",
 #> "Unexpected column(s): {ifelse(length(names.surprising) == 0, \"[none]\",paste0(names.surprising, collapse = \", \"))}")
 #> if(length(c(names.expected.dup, names.provided.dup)) != 0){
@@ -442,28 +455,28 @@ We can take the output of testmaker_df_validator and paste it into our
 code, giving the function a name:
 
 ``` r
-df_input_check <- function(dat, arg = rlang::caller_arg(x), call = rlang::caller_env()){
-  ## Checking if dat is a dataframe ------
-  if(!is.data.frame(dat)){
-    abort.val = class(dat)
+df_input_check   <- function(x, arg = rlang::caller_arg(x), call = rlang::caller_env()){
+  ## Checking if x is a dataframe ------
+  if(!is.data.frame(x)){
+    abort.val = class(x)
     cli::cli_abort("`{arg}` must be dataframe, but is {abort.val}.", call = call)
   }
-  ## Checking if dat has correct dimensions ------
-  if(nrow(dat) != 32){
-    abort.val = nrow(dat)
+  ## Checking if x has correct dimensions ------
+  if(nrow(x) != 32){
+    abort.val = nrow(x)
     cli::cli_abort("Number of rows in `{arg}` must be 32, but is {abort.val}.", call = call)
   }
-  if(ncol(dat) != 11){
-    abort.val = ncol(dat)
+  if(ncol(x) != 11){
+    abort.val = ncol(x)
     cli::cli_abort("Number of columns in `{arg}` must be 11, but is {abort.val}.", call = call)
   }
-  ## Checking if dat exactly matches expected column names ------
+  ## Checking if x exactly matches expected column names ------
   names.expected = c("mpg", "cyl", "disp", "hp", "drat", "wt", "qsec", "vs", "am", "gear", "carb")
-  names.surprising = names(dat)[! names(dat) %in% names.expected]
-  names.missing = names.expected[! names.expected %in% names(dat)]
+  names.surprising = names(x)[! names(x) %in% names.expected]
+  names.missing = names.expected[! names.expected %in% names(x)]
   names.expected.dup = names.expected[duplicated(names.expected)]
-  names.provided.dup = names(res)[duplicated(names(res))]
-  text.use = c("One or more column names in `res` does not match expectations.",
+  names.provided.dup = names(x)[duplicated(names(x))]
+  text.use = c("One or more column names in `{arg}` does not match expectations.",
                "Missing column(s): {ifelse(length(names.missing) == 0, \"[none]\", paste0(names.missing, collapse = \", \"))}.",
                "Unexpected column(s): {ifelse(length(names.surprising) == 0, \"[none]\",paste0(names.surprising, collapse = \", \"))}")
   if(length(c(names.expected.dup, names.provided.dup)) != 0){
@@ -477,22 +490,22 @@ df_input_check <- function(dat, arg = rlang::caller_arg(x), call = rlang::caller
                  )
     )
   }
-  if(!identical(names(dat), c("mpg", "cyl", "disp", "hp", "drat", "wt", "qsec", "vs", "am", "gear", "carb"))){
+  if(!identical(names(x), c("mpg", "cyl", "disp", "hp", "drat", "wt", "qsec", "vs", "am", "gear", "carb"))){
     cli::cli_abort(text.use, call = call)
   }
-  ## Checking if dat has the correct column classes ------
+  ## Checking if x has the correct column classes ------
   test.df = rbind( ## if individual column classes don't matter, delete their entries below
-    data.frame(name = "mpg", correct = "numeric", cur = class(dat$mpg)),
-    data.frame(name = "cyl", correct = "numeric", cur = class(dat$cyl)),
-    data.frame(name = "disp", correct = "numeric", cur = class(dat$disp)),
-    data.frame(name = "hp", correct = "numeric", cur = class(dat$hp)),
-    data.frame(name = "drat", correct = "numeric", cur = class(dat$drat)),
-    data.frame(name = "wt", correct = "numeric", cur = class(dat$wt)),
-    data.frame(name = "qsec", correct = "numeric", cur = class(dat$qsec)),
-    data.frame(name = "vs", correct = "numeric", cur = class(dat$vs)),
-    data.frame(name = "am", correct = "numeric", cur = class(dat$am)),
-    data.frame(name = "gear", correct = "numeric", cur = class(dat$gear)),
-    data.frame(name = "carb", correct = "numeric", cur = class(dat$carb))
+    data.frame(name = "mpg", correct = "numeric", cur = class(x$mpg)),
+    data.frame(name = "cyl", correct = "numeric", cur = class(x$cyl)),
+    data.frame(name = "disp", correct = "numeric", cur = class(x$disp)),
+    data.frame(name = "hp", correct = "numeric", cur = class(x$hp)),
+    data.frame(name = "drat", correct = "numeric", cur = class(x$drat)),
+    data.frame(name = "wt", correct = "numeric", cur = class(x$wt)),
+    data.frame(name = "qsec", correct = "numeric", cur = class(x$qsec)),
+    data.frame(name = "vs", correct = "numeric", cur = class(x$vs)),
+    data.frame(name = "am", correct = "numeric", cur = class(x$am)),
+    data.frame(name = "gear", correct = "numeric", cur = class(x$gear)),
+    data.frame(name = "carb", correct = "numeric", cur = class(x$carb))
   )
   test.vec = test.df$correct != test.df$cur
   if(any(test.vec)){
@@ -523,15 +536,17 @@ when the input is not as expected.
 
 ``` r
 foo3(mtcars)
-#> Error in df_input_check(dat): object 'res' not found
+```
+
+<img src="man/figures/README-unnamed-chunk-12-1.png" width="100%" />
+
+``` r
 foo3(cars)
 #> Error in `foo3()`:
-#> ! Number of rows in `x` must be 32, but is 50.
+#> ! Number of rows in `dat` must be 32, but is 50.
 ```
 
 ### Checking column values
-
-\[In development\]
 
 In some cases it may be useful to ensure that one or more columns of an
 input (or output) contain only the expected values or all of the
@@ -598,12 +613,12 @@ head(dat)
 #> California California      21198   5114        1.1    71.71   10.3    62.6
 #> Colorado     Colorado       2541   4884        0.7    72.06    6.8    63.9
 #>            Frost   Area category
-#> Alabama       20  50708        e
+#> Alabama       20  50708        c
 #> Alaska       152 566432        c
-#> Arizona       15 113417        b
-#> Arkansas      65  51945        c
+#> Arizona       15 113417        a
+#> Arkansas      65  51945        d
 #> California    20 156361        b
-#> Colorado     166 103766        d
+#> Colorado     166 103766        c
 ```
 
 ``` r
@@ -619,7 +634,7 @@ testmaker_df_colcontent_tt(dat, cols = c("state", "category"), return.style = "n
 #>   "South Carolina", "South Dakota", "Tennessee", "Texas", "Utah", 
 #>   "Vermont", "Virginia", "Washington", "West Virginia", "Wisconsin", 
 #>   "Wyoming"),
-#> category = c("e", "c", "b", "d", "a"))
+#> category = c("c", "a", "d", "b", "e"))
 #> ## Checking that column(s) contain no unexpected entries
 #> expect_true(all(unique(res$state) %in% entries.expect$state))
 #> expect_true(all(unique(res$category) %in% entries.expect$category))
@@ -642,6 +657,8 @@ should be written as a separate test. Because of the the low probability
 that the appropriate range is exactly that in a template dataframe,
 there is no `testmaker` function to streamline writing this sort of
 test.
+
+*`testmaker_df_colcontents_cli` is in development.*
 
 ## Function name conventions
 

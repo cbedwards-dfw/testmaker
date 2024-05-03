@@ -106,19 +106,24 @@ foo(mtcars)
 foo(cars)
 ```
 
-The second plot has incorrect labels (the two columns in `cars` are "Speed (mph)" and "Stopping distance"; see `?cars`) and is not plotting the data we intended, but we did not get an error. Instead, the function successfully ran and gave us misleading results. If we want to make `foo` more robust, we can use `testmaker_df_cli()` to generate informative `cli::cli_abort()` based checks to confirm that the input `dat` has characteristics that match our template dataframe (`mtcars`).
+The second plot has incorrect labels (the two columns in `cars` are "Speed (mph)" and "Stopping distance"; see `?cars`) and is not plotting the data we intended, but we did not get an error. Instead, the function successfully ran and gave us misleading results. If we want to make `foo` more robust, we should add code to check that the argument `dat` has the right number of columns, that they match the names we're expecting, and that they're the right data type. `testmaker_df_cli()` streamlines this process, using informative `cli::cli_abort()` based checks written based on our template dataframe (`mtcars`).
 
 ```{r}
 testmaker_df_cli(mtcars, return.style = "none", object.name = "dat")
 ```
 
-Here we specify the object name (alternatively we could leave object.name at the default, which is "res", and then find/replace in the new text). Pasting our system clipboard into our function definition and deleting tests we don't need (row number), we get this an updated, more robust version of `foo`. 
+Here we specify the object name (alternatively we could leave object.name at the default, which is "res", and then find/replace in the new text). Pasting our system clipboard into our function definition and deleting  the test based on row numbers (which is probably not appropriat ehere), we get this an updated, more robust version of `foo`. 
 
 ```{r}
 foo2 = function(dat){
+  ## input checks written by testmaker_df_cli()
   if(!is.data.frame(dat)){
     abort.val = class(dat)
     cli::cli_abort("`dat` must be dataframe, but is {abort.val}.")
+  }
+  if(nrow(dat) != 32){
+    abort.val = nrow(dat)
+    cli::cli_abort("Number of rows in `dat` must be 32, but is {abort.val}.")
   }
   if(ncol(dat) != 11){
     abort.val = ncol(dat)
@@ -147,8 +152,8 @@ foo2 = function(dat){
   names.surprising = names(dat)[! names(dat) %in% names.expected]
   names.missing = names.expected[! names.expected %in% names(dat)]
   names.expected.dup = names.expected[duplicated(names.expected)]
-  names.provided.dup = names(res)[duplicated(names(res))]
-  text.use = c("One or more column names in `res` does not match expectations.",
+  names.provided.dup = names(dat)[duplicated(names(dat))]
+  text.use = c("One or more column names in `dat` does not match expectations.",
                "Missing column(s): {ifelse(length(names.missing) == 0, \"[none]\", paste0(names.missing, collapse = \", \"))}.",
                "Unexpected column(s): {ifelse(length(names.surprising) == 0, \"[none]\",paste0(names.surprising, collapse = \", \"))}")
   if(length(c(names.expected.dup, names.provided.dup)) != 0){
@@ -166,6 +171,7 @@ foo2 = function(dat){
     cli::cli_abort(text.use)
   }
   
+  ## Our original code
   pairs(dat[,-(5:11)],
         labels = c(
           "Miles/gallon",
@@ -176,7 +182,7 @@ foo2 = function(dat){
 }
 ```
 
-Let's see how this new function behaves when given `mtcars` or `cars`.
+This has added quite a lot of code, but we personally did not have to write it. Let's see how `foo2` behaves when given `mtcars` or `cars`.
 
 ```{r, fig.width = 8, error = TRUE}
 foo2(mtcars)
@@ -201,28 +207,28 @@ testmaker_df_validator(mtcars, return.style = "none")
 We can take the output of testmaker_df_validator and paste it into our code, giving the function a name:
 
 ```{r}
-df_input_check <- function(dat, arg = rlang::caller_arg(x), call = rlang::caller_env()){
-  ## Checking if dat is a dataframe ------
-  if(!is.data.frame(dat)){
-    abort.val = class(dat)
+df_input_check   <- function(x, arg = rlang::caller_arg(x), call = rlang::caller_env()){
+  ## Checking if x is a dataframe ------
+  if(!is.data.frame(x)){
+    abort.val = class(x)
     cli::cli_abort("`{arg}` must be dataframe, but is {abort.val}.", call = call)
   }
-  ## Checking if dat has correct dimensions ------
-  if(nrow(dat) != 32){
-    abort.val = nrow(dat)
+  ## Checking if x has correct dimensions ------
+  if(nrow(x) != 32){
+    abort.val = nrow(x)
     cli::cli_abort("Number of rows in `{arg}` must be 32, but is {abort.val}.", call = call)
   }
-  if(ncol(dat) != 11){
-    abort.val = ncol(dat)
+  if(ncol(x) != 11){
+    abort.val = ncol(x)
     cli::cli_abort("Number of columns in `{arg}` must be 11, but is {abort.val}.", call = call)
   }
-  ## Checking if dat exactly matches expected column names ------
+  ## Checking if x exactly matches expected column names ------
   names.expected = c("mpg", "cyl", "disp", "hp", "drat", "wt", "qsec", "vs", "am", "gear", "carb")
-  names.surprising = names(dat)[! names(dat) %in% names.expected]
-  names.missing = names.expected[! names.expected %in% names(dat)]
+  names.surprising = names(x)[! names(x) %in% names.expected]
+  names.missing = names.expected[! names.expected %in% names(x)]
   names.expected.dup = names.expected[duplicated(names.expected)]
-  names.provided.dup = names(res)[duplicated(names(res))]
-  text.use = c("One or more column names in `res` does not match expectations.",
+  names.provided.dup = names(x)[duplicated(names(x))]
+  text.use = c("One or more column names in `{arg}` does not match expectations.",
                "Missing column(s): {ifelse(length(names.missing) == 0, \"[none]\", paste0(names.missing, collapse = \", \"))}.",
                "Unexpected column(s): {ifelse(length(names.surprising) == 0, \"[none]\",paste0(names.surprising, collapse = \", \"))}")
   if(length(c(names.expected.dup, names.provided.dup)) != 0){
@@ -236,22 +242,22 @@ df_input_check <- function(dat, arg = rlang::caller_arg(x), call = rlang::caller
                  )
     )
   }
-  if(!identical(names(dat), c("mpg", "cyl", "disp", "hp", "drat", "wt", "qsec", "vs", "am", "gear", "carb"))){
+  if(!identical(names(x), c("mpg", "cyl", "disp", "hp", "drat", "wt", "qsec", "vs", "am", "gear", "carb"))){
     cli::cli_abort(text.use, call = call)
   }
-  ## Checking if dat has the correct column classes ------
+  ## Checking if x has the correct column classes ------
   test.df = rbind( ## if individual column classes don't matter, delete their entries below
-    data.frame(name = "mpg", correct = "numeric", cur = class(dat$mpg)),
-    data.frame(name = "cyl", correct = "numeric", cur = class(dat$cyl)),
-    data.frame(name = "disp", correct = "numeric", cur = class(dat$disp)),
-    data.frame(name = "hp", correct = "numeric", cur = class(dat$hp)),
-    data.frame(name = "drat", correct = "numeric", cur = class(dat$drat)),
-    data.frame(name = "wt", correct = "numeric", cur = class(dat$wt)),
-    data.frame(name = "qsec", correct = "numeric", cur = class(dat$qsec)),
-    data.frame(name = "vs", correct = "numeric", cur = class(dat$vs)),
-    data.frame(name = "am", correct = "numeric", cur = class(dat$am)),
-    data.frame(name = "gear", correct = "numeric", cur = class(dat$gear)),
-    data.frame(name = "carb", correct = "numeric", cur = class(dat$carb))
+    data.frame(name = "mpg", correct = "numeric", cur = class(x$mpg)),
+    data.frame(name = "cyl", correct = "numeric", cur = class(x$cyl)),
+    data.frame(name = "disp", correct = "numeric", cur = class(x$disp)),
+    data.frame(name = "hp", correct = "numeric", cur = class(x$hp)),
+    data.frame(name = "drat", correct = "numeric", cur = class(x$drat)),
+    data.frame(name = "wt", correct = "numeric", cur = class(x$wt)),
+    data.frame(name = "qsec", correct = "numeric", cur = class(x$qsec)),
+    data.frame(name = "vs", correct = "numeric", cur = class(x$vs)),
+    data.frame(name = "am", correct = "numeric", cur = class(x$am)),
+    data.frame(name = "gear", correct = "numeric", cur = class(x$gear)),
+    data.frame(name = "carb", correct = "numeric", cur = class(x$carb))
   )
   test.vec = test.df$correct != test.df$cur
   if(any(test.vec)){
@@ -260,6 +266,8 @@ df_input_check <- function(dat, arg = rlang::caller_arg(x), call = rlang::caller
     )
   }
 }
+
+
 ```
 
 With that function defined, we can make a much shorter version of `foo`:
@@ -287,8 +295,6 @@ foo3(cars)
 
 
 ### Checking column values
-
-[In development]
 
 In some cases it may be useful to ensure that one or more columns of an input (or output) contain only the expected values or all of the expected values. As an example, imagine our template dataframe is an augmented version of the built-in data `state.x77` that contains a column `state`. Our hypothetical function should produce a similar dataframe, including a `state` column which should contain *all* of the entries from our template dataframe. Let's first create our template dataframe (in application, this probably already exists):
 
@@ -318,6 +324,7 @@ As a word of warning, this function should only be used on columns that contain 
 
 If we expect values of some column to be within a numerical range, that should be written as a separate test. Because of the the low probability that the appropriate range is exactly that in a template dataframe, there is no `testmaker` function to streamline writing this sort of test.
 
+*`testmaker_df_colcontents_cli` is in development.*
 
 ## Function name conventions
 
