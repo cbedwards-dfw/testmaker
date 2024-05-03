@@ -135,12 +135,12 @@ testmaker_df_cli = function(x, return.style = c("clip", "text", "none"), silent 
 #' @export
 #'
 #' @examples
-#' testmaker_df_validater(cars, return.style = "none")
+#' testmaker_df_validator(cars, return.style = "none")
 #' \dontrun{
 #' #Workflow version, which loads text into clipboard for easy pasting:
 #' testmaker_df_validator(cars)
 #' }
-testmaker_df_validater = function(x, return.style = c("clip", "text", "none"), silent = FALSE, object.name = "x", col.order.matters = TRUE){
+testmaker_df_validator = function(x, return.style = c("clip", "text", "none"), silent = FALSE, object.name = "x", col.order.matters = TRUE){
   validate_testmaker(x, return.style, silent, object.name)
 
   test.text = c(glue::glue(" <- function({object.name}, arg = rlang::caller_arg(x), call = rlang::caller_env()){{"),

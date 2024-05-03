@@ -56,7 +56,7 @@ test_that("Testing that stopifnot name comparison orderless works properly",{
 
 test_that("Testing that df_validator produces working validation function",{
   ## orderless should fail if one or more columns is missing
-  sin.text = testmaker_df_validater(cars, return.style = "text", silent = TRUE, object.name = "res")
+  sin.text = testmaker_df_validator(cars, return.style = "text", silent = TRUE, object.name = "res")
   ##extra fiddliness: creating a helper function dynamically, testing using mock main function
   sin.text[1] = paste0("df_check ", sin.text[1])
   eval(parse(text = sin.text))
@@ -69,7 +69,7 @@ test_that("Testing that df_validator produces working validation function",{
 
 test_that("Testing that df_validator produces working validation function for larger dataframe",{
   ## orderless should fail if one or more columns is missing
-  sin.text = testmaker_df_validater(mtcars, return.style = "text", silent = TRUE, object.name = "res")
+  sin.text = testmaker_df_validator(mtcars, return.style = "text", silent = TRUE, object.name = "res")
   ##extra fiddliness: creating a helper function dynamically, testing using mock main function
   sin.text[1] = paste0("df_check ", sin.text[1])
   eval(parse(text = sin.text))
