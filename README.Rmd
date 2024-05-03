@@ -331,14 +331,14 @@ If we expect values of some column to be within a numerical range, that should b
 Primary functions are written in the form `testmaker_df_{output type}()`, where the output type is in abbreviated form: `tt` refers to `testthat` and `cli` refers to `cli::cli_abort`. Sub functions are written in the form
 `testmaker_df_{dataframe characteristic}_{output type}()`. The inclusion of `_df_` leaves room to develop equivalent functions for other data types if that becomes useful.
 
-## Dev wishlist
+## Ease of use
 
-## Dev notes
+When working on package development with the `testthat` framework, adding 
 
-It was suggested this could be provided in the testthat setup files: https://testthat.r-lib.org/articles/special-files.html. From that:
+```r
+load()
+```
 
-> Helper files live in tests/testtthat/, start with helper, and end with .r or .R. 
-They are sourced by devtools::load_all() (so they’re available interactively when developing your packages) 
-and by test_check() and friends (so that they’re available no matter how your tests are executed).
-
-I will dig into how this package can easily be inserted in the the testthat setup files, and will update documentation with instructions when I have done so.
+into a helper file in `tests/testhat/` will ensure that the `testmaker` package is loaded
+whenever load_all() is called, giving easy access to `testmaker` functions without needing
+to load it on every restart of R. (For details on helper files, see https://testthat.r-lib.org/articles/special-files.html#helper-files).

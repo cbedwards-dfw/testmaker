@@ -613,12 +613,12 @@ head(dat)
 #> California California      21198   5114        1.1    71.71   10.3    62.6
 #> Colorado     Colorado       2541   4884        0.7    72.06    6.8    63.9
 #>            Frost   Area category
-#> Alabama       20  50708        c
-#> Alaska       152 566432        c
-#> Arizona       15 113417        a
-#> Arkansas      65  51945        d
-#> California    20 156361        b
-#> Colorado     166 103766        c
+#> Alabama       20  50708        d
+#> Alaska       152 566432        e
+#> Arizona       15 113417        e
+#> Arkansas      65  51945        c
+#> California    20 156361        d
+#> Colorado     166 103766        e
 ```
 
 ``` r
@@ -634,7 +634,7 @@ testmaker_df_colcontent_tt(dat, cols = c("state", "category"), return.style = "n
 #>   "South Carolina", "South Dakota", "Tennessee", "Texas", "Utah", 
 #>   "Vermont", "Virginia", "Washington", "West Virginia", "Wisconsin", 
 #>   "Wyoming"),
-#> category = c("c", "a", "d", "b", "e"))
+#> category = c("d", "e", "c", "b", "a"))
 #> ## Checking that column(s) contain no unexpected entries
 #> expect_true(all(unique(res$state) %in% entries.expect$state))
 #> expect_true(all(unique(res$category) %in% entries.expect$category))
@@ -670,19 +670,17 @@ Sub functions are written in the form
 of `_df_` leaves room to develop equivalent functions for other data
 types if that becomes useful.
 
-## Dev wishlist
+## Ease of use
 
-## Dev notes
+When working on package development with the `testthat` framework,
+adding
 
-It was suggested this could be provided in the testthat setup files:
-<https://testthat.r-lib.org/articles/special-files.html>. From that:
+``` r
+load()
+```
 
-> Helper files live in tests/testtthat/, start with helper, and end with
-> .r or .R. They are sourced by devtools::load_all() (so they’re
-> available interactively when developing your packages) and by
-> test_check() and friends (so that they’re available no matter how your
-> tests are executed).
-
-I will dig into how this package can easily be inserted in the the
-testthat setup files, and will update documentation with instructions
-when I have done so.
+into a helper file in `tests/testhat/` will ensure that the `testmaker`
+package is loaded whenever load_all() is called, giving easy access to
+`testmaker` functions without needing to load it on every restart of R.
+(For details on helper files, see
+<https://testthat.r-lib.org/articles/special-files.html#helper-files>).
