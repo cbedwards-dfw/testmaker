@@ -47,12 +47,6 @@ testmaker_df_colcontent_tt = function(x, cols, return.style = c("clip", "text", 
 #'
 #' @inherit testmaker_df_sin return
 #'
-#' @examples
-#'
-#' dat = data.frame(state.x77, state = rownames(state.x77))
-#' dat$category = sample(letters[1:5], size = nrow(dat), replace = TRUE)
-#' testmaker_df_colcontent_sin(dat, c("state", "category"), return.style = "none")
-#'
 testmaker_df_colcontent_sin = function(x, cols, return.style = c("clip", "text", "none"), silent = FALSE, object.name = "res"){
   validate_testmaker(x, return.style, silent, object.name)
   stopifnot("`cols` must be a character or character vector" = is.character(cols))

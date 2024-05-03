@@ -24,8 +24,6 @@ testmaker_df_class_tt = function(x,  return.style = c("clip", "text", "none"), s
 #'
 #' @inherit testmaker_df_dim_sin return
 #'
-#' @examples
-#' testmaker_df_class_sin(cars, return.style = "text")
 testmaker_df_class_sin = function(x,  return.style = c("clip", "text", "none"), silent = FALSE, object.name = "res"){
   validate_testmaker(x, return.style, silent, object.name)
 

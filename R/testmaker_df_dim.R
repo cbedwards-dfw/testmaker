@@ -27,8 +27,6 @@ testmaker_df_dim_tt = function(x,  return.style = c("clip", "text", "none"), sil
 #'
 #' @return Either nothing or a character vector of lines of R code for writing a stopifnot test.
 #'
-#' @examples
-#' testmaker_df_dim_sin(cars, return.style = "text")
 testmaker_df_dim_sin = function(x,  return.style = c("clip", "text", "none"), silent = FALSE, object.name = "res"){
 
   validate_testmaker(x, return.style, silent, object.name)
@@ -45,7 +43,10 @@ testmaker_df_dim_sin = function(x,  return.style = c("clip", "text", "none"), si
 
 #' Generate `cli_abort` code for dataframe dimensions
 #'
-#' @inheritParams testmaker_df_sin
+#' @inheritParams testmaker_df_cli
+#' @param for.fun Is the resulting text meant to be inserted into a helper function?
+#' If `TRUE`, adds in support for correctly identifying the argument name and function name
+#' based on have arguments `arg = rlang::caller_arg(x)` and `call = rlang::caller_env()` in the helper function.
 #'
 #' @return Either nothing or a character vector of lines of R code for writing a stopifnot test.
 #' @export

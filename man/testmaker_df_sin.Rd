@@ -36,8 +36,3 @@ of the columns, and the names of the columns. Note that this is not intended to 
 to streamline the process of generating the relevant code. In particular, testing the number of rows is often not appropriate
 (e.g., in many use cases the input data frame is expected to have unknown nrow).
 }
-\examples{
-\dontrun{
-stopifnotmaker(cars)
-}
-}

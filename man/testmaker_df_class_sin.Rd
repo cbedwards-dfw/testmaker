@@ -2,7 +2,7 @@
 % Please edit documentation in R/testmaker_df_class.R
 \name{testmaker_df_class_sin}
 \alias{testmaker_df_class_sin}
-\title{Generate \code{stopifnot} code for dataframe column classes}
+\title{\strong{DEPRECATED} Generate \code{stopifnot} code for dataframe column classes}
 \usage{
 testmaker_df_class_sin(
   x,
@@ -25,8 +25,5 @@ testmaker_df_class_sin(
 Either nothing or a character vector of lines of R code for writing a stopifnot test.
 }
 \description{
-Generate \code{stopifnot} code for dataframe column classes
-}
-\examples{
-testmaker_df_class_sin(cars, return.style = "text")
+\strong{DEPRECATED} Generate \code{stopifnot} code for dataframe column classes
 }

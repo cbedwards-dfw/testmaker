@@ -2,7 +2,7 @@
 % Please edit documentation in R/testmaker_df_dim.R
 \name{testmaker_df_dim_sin}
 \alias{testmaker_df_dim_sin}
-\title{Generate \code{stopifnot} code for dataframe dimensions}
+\title{\strong{Deprecated} Generate \code{stopifnot} code for dataframe dimensions}
 \usage{
 testmaker_df_dim_sin(
   x,
@@ -25,8 +25,5 @@ testmaker_df_dim_sin(
 Either nothing or a character vector of lines of R code for writing a stopifnot test.
 }
 \description{
-Generate \code{stopifnot} code for dataframe dimensions
-}
-\examples{
-testmaker_df_dim_sin(cars, return.style = "text")
+\strong{Deprecated} Generate \code{stopifnot} code for dataframe dimensions
 }

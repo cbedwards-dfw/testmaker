@@ -7,6 +7,7 @@
 #' @param return.style Defines what is returned by testmaker functions. SHOULD be "clip", "text", or "none"
 #' @param object.name Name of the object to apply the stopifnot to; presumably the name of the dataframe argument
 #' in the function the test is being written for. Defaults to NULL; provide when validating a stopifnot_* function.
+#' @param call  Identifies the function calling this helper function, allowing more informative error messages
 #'
 #'
 #'

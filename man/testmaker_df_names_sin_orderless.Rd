@@ -2,7 +2,7 @@
 % Please edit documentation in R/testmaker_df_names.R
 \name{testmaker_df_names_sin_orderless}
 \alias{testmaker_df_names_sin_orderless}
-\title{Generate \code{stopifnot} code for dataframe column names disregarding order}
+\title{\strong{DEPRECATED} Generate \code{stopifnot} code for dataframe column names disregarding order}
 \usage{
 testmaker_df_names_sin_orderless(
   x,
@@ -25,7 +25,7 @@ testmaker_df_names_sin_orderless(
 Either nothing or a character vector of lines of R code for writing a stopifnot test.
 }
 \description{
-Generate \code{stopifnot} code for dataframe column names disregarding order
+\strong{DEPRECATED} Generate \code{stopifnot} code for dataframe column names disregarding order
 }
 \examples{
 testmaker_df_names_sin(cars, return.style = "text")

@@ -21,6 +21,8 @@ validate_testmaker(
 
 \item{object.name}{Name of the object to apply the stopifnot to; presumably the name of the dataframe argument
 in the function the test is being written for. Defaults to NULL; provide when validating a stopifnot_* function.}
+
+\item{call}{Identifies the function calling this helper function, allowing more informative error messages}
 }
 \description{
 Internal helper function to streamline validation

@@ -21,6 +21,10 @@ testmaker_df_dim_cli(
 \item{silent}{Suppress printing text to console? logical; default of false.}
 
 \item{object.name}{Name of the object to apply the stopifnot to; presumably the name of the dataframe argument}
+
+\item{for.fun}{Is the resulting text meant to be inserted into a helper function?
+If \code{TRUE}, adds in support for correctly identifying the argument name and function name
+based on have arguments \code{arg = rlang::caller_arg(x)} and \code{call = rlang::caller_env()} in the helper function.}
 }
 \value{
 Either nothing or a character vector of lines of R code for writing a stopifnot test.

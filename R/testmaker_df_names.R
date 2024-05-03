@@ -56,7 +56,7 @@ testmaker_df_names_sin_orderless = function(x,  return.style = c("clip", "text",
                            names.list = glue::glue_collapse(glue::glue('"{names(x)}"'), sep = ", ")),
                 glue::glue('stopifnot(\'`{object.name}` does not contain all expected columns.\\n Expecting {names.list}.\' = all(c({names.list}) %in% names({object.name})))',
                            names.list = glue::glue_collapse(glue::glue('"{names(x)}"'), sep = ", "))
-                )
+  )
   # test.text = c(paste0('stopifnot(all(names(', object.name, ') %in% c(', paste0(paste0('"', names(x), '"'), collapse = ", "), ')))'),
   #               paste0('stopifnot(all(c(', paste0(paste0('"', names(x), '"'), collapse = ", "), ') %in% names(', object.name, ')))'))
 
@@ -70,15 +70,31 @@ testmaker_df_names_cli = function(x,  return.style = c("clip", "text", "none"), 
   object.name.text = ifelse(for.fun, '{arg}', object.name)
 
   names.vec = glue::glue_collapse(glue::glue('"{names(x)}"'), sep = ", ")
-  test.text = glue::glue('stopifnot(\'`{object.name}` column names do not match expectation.\\nShould be: c({names.vec})\' = identical(names({object.name}), c({names.vec})))')
-  test.text = paste0('stopifnot(identical(names(', object.name, '),c(', paste0(paste0('"', names(x), '"'), collapse = ", "), ')))')
+  # test.text = glue::glue('stopifnot(\'`{object.name}` column names do not match expectation.\\nShould be: c({names.vec})\' = identical(names({object.name}), c({names.vec})))')
+  # test.text = paste0('stopifnot(identical(names(', object.name, '),c(', paste0(paste0('"', names(x), '"'), collapse = ", "), ')))')
 
+  text.precursor = glue::glue('names.expected = {paste0(capture.output(dput(names(x))), collapse = "")}\n',
+                              'names.surprising = names({object.name})[! names({object.name}) %in% names.expected]\n',
+                              'names.missing = names.expected[! names.expected %in% names({object.name})]\n',
+                              'names.expected.dup = names.expected[duplicated(names.expected)]\n',
+                              'names.provided.dup = names(res)[duplicated(names(res))]\n',
+                              'text.use = c("One or more column names in `res` does not match expectations.",\n',
+                              '"Missing column(s): {{ifelse(length(names.missing) == 0, \\"[none]\\", paste0(names.missing, collapse = \\", \\"))}}.",\n',
+                              '"Unexpected column(s): {{ifelse(length(names.surprising) == 0, \\"[none]\\",paste0(names.surprising, collapse = \\", \\"))}}")\n',
+                              'if(length(c(names.expected.dup, names.provided.dup)) != 0){{\n',
+                              'text.use = c(text.use,',
+                              '"!" = "Warning: there is some column name duplication.",\n',
+                              'paste0("Expected duplicate names: ",\n' ,
+                              'ifelse(length(names.expected.dup) == 0,\n',
+                              '"[none]",\n',
+                              'paste0(names.expected.dup, collapse = ", ")), "."),\n',
+                              'paste0("Observed duplicate names: ",\n',
+                              'ifelse(length(names.provided.dup) == 0, "[none]", paste0(names.provided.dup, collapse = ", ")), "."\n',
+                              ')\n', ')\n','}}'
+  )
   text.if = glue::glue('if(!identical(names({object.name}), c({names.vec})))')
-  text.alert = glue::glue('cli::cli_abort(c(\'One or more column names in `{object.name.text}` does not match expectations.\',\
-                          \'Must match {names.vec}\',\
-                          glue::glue(\'Found {{val}}\',\n',
-                          '  val = glue::glue_collapse(glue::glue(\'"{{names({object.name})}}"\'), sep = ", "))){abort.args})')
-  test.text = glue::glue("{text.if}{{\n  {text.alert}\n}}")
+  text.alert = glue::glue('cli::cli_abort(text.use{abort.args})\n')
+  test.text = glue::glue('{paste0(text.precursor, collapse = "\n")}\n{text.if}{{\n{text.alert}\n}}')
   test.text = paste0(as.character(test.text), collapse = "\n")
 
 

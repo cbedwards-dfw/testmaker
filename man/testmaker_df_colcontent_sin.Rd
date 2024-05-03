@@ -2,7 +2,7 @@
 % Please edit documentation in R/testmaker_df_colcontents.R
 \name{testmaker_df_colcontent_sin}
 \alias{testmaker_df_colcontent_sin}
-\title{Generate \code{stopifnot} code to check contents of column(s) against template}
+\title{\strong{DEPRECATED} Generate \code{stopifnot} code to check contents of column(s) against template}
 \usage{
 testmaker_df_colcontent_sin(
   x,
@@ -28,12 +28,5 @@ testmaker_df_colcontent_sin(
 Either nothing or a character vector of lines of R code for writing a testthat test, depending on \code{return.style}.
 }
 \description{
-Generate \code{stopifnot} code to check contents of column(s) against template
-}
-\examples{
-
-dat = data.frame(state.x77, state = rownames(state.x77))
-dat$category = sample(letters[1:5], size = nrow(dat), replace = TRUE)
-testmaker_df_colcontent_sin(dat, c("state", "category"), return.style = "none")
-
+\strong{DEPRECATED} Generate \code{stopifnot} code to check contents of column(s) against template
 }
