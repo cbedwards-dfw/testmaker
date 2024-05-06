@@ -336,7 +336,7 @@ Primary functions are written in the form `testmaker_df_{output type}()`, where 
 When working on package development with the `testthat` framework, adding 
 
 ```r
-load()
+load(testmaker)
 ```
 
 into a helper file in `tests/testhat/` will ensure that the `testmaker` package is loaded

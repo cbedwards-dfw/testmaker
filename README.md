@@ -613,12 +613,12 @@ head(dat)
 #> California California      21198   5114        1.1    71.71   10.3    62.6
 #> Colorado     Colorado       2541   4884        0.7    72.06    6.8    63.9
 #>            Frost   Area category
-#> Alabama       20  50708        d
+#> Alabama       20  50708        e
 #> Alaska       152 566432        e
-#> Arizona       15 113417        e
-#> Arkansas      65  51945        c
-#> California    20 156361        d
-#> Colorado     166 103766        e
+#> Arizona       15 113417        a
+#> Arkansas      65  51945        e
+#> California    20 156361        e
+#> Colorado     166 103766        c
 ```
 
 ``` r
@@ -634,7 +634,7 @@ testmaker_df_colcontent_tt(dat, cols = c("state", "category"), return.style = "n
 #>   "South Carolina", "South Dakota", "Tennessee", "Texas", "Utah", 
 #>   "Vermont", "Virginia", "Washington", "West Virginia", "Wisconsin", 
 #>   "Wyoming"),
-#> category = c("d", "e", "c", "b", "a"))
+#> category = c("e", "a", "c", "d", "b"))
 #> ## Checking that column(s) contain no unexpected entries
 #> expect_true(all(unique(res$state) %in% entries.expect$state))
 #> expect_true(all(unique(res$category) %in% entries.expect$category))
@@ -676,7 +676,7 @@ When working on package development with the `testthat` framework,
 adding
 
 ``` r
-load()
+load(testmaker)
 ```
 
 into a helper file in `tests/testhat/` will ensure that the `testmaker`
