@@ -6,7 +6,7 @@
 <!-- badges: start -->
 <!-- badges: end -->
 
-The goal of `testmaker` is to streamline the generation of parameter
+The goal of `{testmaker}` is to streamline the generation of parameter
 checking and testthat test generation for dataframes, based on template
 data frames. When developing R code for packages, it’s valuable to write
 test functions using the `testthat` framework. When writing functions
@@ -26,13 +26,23 @@ tests, this workflow does not require that the template dataframe be
 available to the user at runtime, and allows easy moidfication of the
 tests to rmove individual criterion.
 
-This package was inspired by a package development workshop put on by
+`{testmaker}` was inspired by a package development workshop put on by
 Andy Teucher (<https://andyteucher.ca>) and Sam Albers
 (<https://samalbers.science>).
 
+`{testmaker}` is part of the [“FRAMverse” R
+universe](https://framverse.r-universe.dev/packages).
+
 ## Installation
 
-You can install the development version of testmaker like so:
+You can install `{testmaker}` from R-universe like so:
+
+``` r
+install.packages("testmaker", repos = "https://framverse.r-universe.dev")
+```
+
+With Rtools and the `{devtools}` package installed, you can also install
+this package from the source code:
 
 ``` r
 devtools::install_github("cbedwards-dfw/testmaker")
@@ -613,12 +623,12 @@ head(dat)
 #> California California      21198   5114        1.1    71.71   10.3    62.6
 #> Colorado     Colorado       2541   4884        0.7    72.06    6.8    63.9
 #>            Frost   Area category
-#> Alabama       20  50708        e
+#> Alabama       20  50708        a
 #> Alaska       152 566432        e
 #> Arizona       15 113417        a
-#> Arkansas      65  51945        e
-#> California    20 156361        e
-#> Colorado     166 103766        c
+#> Arkansas      65  51945        d
+#> California    20 156361        d
+#> Colorado     166 103766        a
 ```
 
 ``` r
@@ -634,7 +644,7 @@ testmaker_df_colcontent_tt(dat, cols = c("state", "category"), return.style = "n
 #>   "South Carolina", "South Dakota", "Tennessee", "Texas", "Utah", 
 #>   "Vermont", "Virginia", "Washington", "West Virginia", "Wisconsin", 
 #>   "Wyoming"),
-#> category = c("e", "a", "c", "d", "b"))
+#> category = c("a", "e", "d", "c", "b"))
 #> ## Checking that column(s) contain no unexpected entries
 #> expect_true(all(unique(res$state) %in% entries.expect$state))
 #> expect_true(all(unique(res$category) %in% entries.expect$category))

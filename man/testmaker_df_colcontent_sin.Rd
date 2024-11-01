@@ -9,7 +9,8 @@ testmaker_df_colcontent_sin(
   cols,
   return.style = c("clip", "text", "none"),
   silent = FALSE,
-  object.name = "res"
+  object.name = "res",
+  for.fun = FALSE
 )
 }
 \arguments{

@@ -18,17 +18,26 @@ knitr::opts_chunk$set(
 <!-- badges: start -->
 <!-- badges: end -->
 
-The goal of `testmaker` is to streamline the generation of parameter checking and testthat test generation for dataframes, based on template data frames. When developing R code for packages, it's valuable to write test functions using the `testthat` framework. When writing functions for packages and for other large projects (especially involving multiple people or functions), it's also valuable to write small tests to check that arguments inputs are what you intend them to be. In many cases these tests are small, but when arguments or outputs can be dataframes that should have specific configurations of columns, column names, and column types, writing tests can become tedious. 
+The goal of `{testmaker}` is to streamline the generation of parameter checking and testthat test generation for dataframes, based on template data frames. When developing R code for packages, it's valuable to write test functions using the `testthat` framework. When writing functions for packages and for other large projects (especially involving multiple people or functions), it's also valuable to write small tests to check that arguments inputs are what you intend them to be. In many cases these tests are small, but when arguments or outputs can be dataframes that should have specific configurations of columns, column names, and column types, writing tests can become tedious. 
 
 This package streamlines that process by using a template dataframe with the appropriate charactereristics (e.g., the input dataframe you are using when developing your code), and generates testthat code or input checks to compare the output or input characteristics against those obtained from the template. Notably, by generating R code for these tests, 
 this workflow does not require that the template dataframe be available to the user at runtime, and allows easy moidfication of the tests to rmove individual criterion.
 
 
-This package was inspired by a package development workshop put on by Andy Teucher (https://andyteucher.ca) and Sam Albers (https://samalbers.science).
+`{testmaker}` was inspired by a package development workshop put on by Andy Teucher (https://andyteucher.ca) and Sam Albers (https://samalbers.science). 
+
+`{testmaker}` is part of the ["FRAMverse" R universe](https://framverse.r-universe.dev/packages).
 
 ## Installation
 
-You can install the development version of testmaker like so:
+You can install `{testmaker}` from R-universe like so:
+
+```r
+install.packages("testmaker", repos = "https://framverse.r-universe.dev")
+```
+
+With Rtools and the `{devtools}` package installed, you can also install this package from
+the source code:
 
 ``` r
 devtools::install_github("cbedwards-dfw/testmaker")
@@ -40,6 +49,7 @@ devtools::install_github("cbedwards-dfw/testmaker")
 
 The functions in `testmaker` generate useful R code based on the characteristic of a
 template dataframe. Before we get into the specifics, a brief demonstration of using `testmaker` to write a helper function to test a dataframe input, based on the characteristics of the `cars` dataframe:
+
 
 ```{r}
 library(testmaker)
